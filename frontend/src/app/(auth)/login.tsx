@@ -14,6 +14,11 @@ const login = () => {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const handleLogin = () => {
+        console.log(email, password);
+    }
+
     return (
         <SafeAreaView>
             <FontAwesome name="long-arrow-left" style={styles.back} onPress={router.back}/>
@@ -34,7 +39,7 @@ const login = () => {
                     style={styles.input}
                 />
                 <Text style={styles.changePassword}>Forget your password?</Text>
-                <Button text='Log In' onPress={() => router.push('/(tabs)/')}/>
+                <Button text='Log In' onPress={handleLogin}/>
             </View>
         </SafeAreaView>
   )

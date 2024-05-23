@@ -26,10 +26,10 @@ const loginUser = async (req, res) => {
 // signup user
 //in a route handler, can only use res.json once *** multiple calls will lead to errors
 const signupUser = async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, name, preferences, restrictions } = req.body;
     //to catch error: "email alr in use" or if input does not follow the Schema
     try {
-        const user = await User.signup(email, password);
+        const user = await User.signup(email, password, name, preferences, restrictions);
         //create tokem
         const token = createToken(user._id)
         res.status(200).json({email, token})
