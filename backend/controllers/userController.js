@@ -17,7 +17,7 @@ const loginUser = async (req, res) => {
         const user = await User.login(email, password);
         //create token
         const token = createToken(user._id)
-        res.status(200).json({email, token});
+        res.status(200).json({token, user});
     } catch (error) {
         res.status(400).json({error: error.message})
     }
@@ -32,11 +32,21 @@ const signupUser = async (req, res) => {
         const user = await User.signup(email, password, name, preferences, restrictions);
         //create tokem
         const token = createToken(user._id)
-        res.status(200).json({email, token})
+        res.status(200).json({email, token, user})
 
     } catch (error) {
         res.status(400).json({error: error.message})
     }
 }
 
-module.exports = { loginUser, signupUser };
+const hello = async (req, res) => {
+    //to catch error: "email alr in use" or if input does not follow the Schema
+    try {
+        res.status(200).json({email: "hello"})
+
+    } catch (error) {
+        res.status(400).json({error: error.message})
+    }
+}
+
+module.exports = { loginUser, signupUser, hello };

@@ -1,10 +1,14 @@
-import { View, Text, Image, StyleSheet, TextInput } from 'react-native'
+import { View, Text, Image, StyleSheet, TextInput, TouchableOpacity } from 'react-native'
 import { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from '@assets/colors';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Button from '@/components/Button';
+import { LoginUser } from '@/types';
+import { loginApi } from '../api/api';
+import { useAuthContext } from '@/providers/AuthProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const loginVector = require("@assets/images/LoginVector.png");
 
@@ -14,9 +18,35 @@ const login = () => {
     const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [secureTextEntry, setSecureTextEntry] = useState(true);
+    const [error, setError] = useState('noError');
+    const { dispatch } = useAuthContext();
 
-    const handleLogin = () => {
-        console.log(email, password);
+    const handleLogin = async () => {
+        const loginUser: LoginUser = {
+            email,
+            password
+        }
+        const resetFields = () => {
+            setEmail('');
+            setPassword('');
+        }
+
+        const json:any = await loginApi(loginUser);
+        const errorMsg = json?.response?.json?.error;
+        console.log(json);
+        setError(errorMsg);
+        if (json?.token) {
+            router.push('/(tabs)/')
+            resetFields();
+            //set session data
+            dispatch({type:'LOGIN', payload:json.user})
+            try {
+                await AsyncStorage.setItem('user', JSON.stringify(json))
+            } catch (e) {
+                console.log('Failed to save user token');
+            }
+        }
     }
 
     return (
@@ -28,18 +58,28 @@ const login = () => {
                 <Text style={styles.label}>Email</Text>
                 <TextInput 
                     value={email}
-                    onChangeText={setEmail}
+                    onChangeText={(text) => setEmail(text.toLowerCase())} 
                     placeholder="jon@gmail.com"
-                    style={styles.input}
+                    style={styles.inputContainer}
                 />
+                
                 <Text style={styles.label}>Password</Text>
-                <TextInput 
-                    value={password}
-                    onChangeText={setPassword}
-                    style={styles.input}
-                />
+                
+                <View style={styles.inputContainer}>
+                    <TextInput 
+                        value={password}
+                        onChangeText={setPassword}
+                        style={{flex: 1}}
+                        secureTextEntry = {secureTextEntry}
+                    />
+                    <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
+                        <Text style={styles.showText}>{secureTextEntry ? 'Show' : 'Hide'}</Text>
+                    </TouchableOpacity>
+                </View>
+                
                 <Text style={styles.changePassword}>Forget your password?</Text>
                 <Button text='Log In' onPress={handleLogin}/>
+                {error != ('noError') && <Text style={[styles.label, {color:'red', alignSelf:'center'}]}>{error}</Text>}
             </View>
         </SafeAreaView>
   )
@@ -54,10 +94,12 @@ const styles = StyleSheet.create({
     },
     container: {
         alignSelf:'center',
+        width:'80%'
     },
     vector: {
-        height:410,
-        width:300,
+        height:340,
+        width:220,
+        alignSelf:'center'
     },
     title: {
         fontFamily:"Inter",
@@ -71,13 +113,7 @@ const styles = StyleSheet.create({
         fontSize:15,
         fontWeight:"300",
         marginTop:20,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: 'gray',
-        padding: 10,
-        marginTop: 5,
-        backgroundColor: 'white',
+        marginBottom:5
     },
     changePassword: {
         textAlign:"right",
@@ -87,5 +123,19 @@ const styles = StyleSheet.create({
         marginBottom:15,
         marginTop:5,
     },
-    
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'gray',
+        padding: 12,
+        width: '100%',
+        backgroundColor: 'white',
+    },
+    showText: {
+        color: colors.primary800,
+        marginLeft: 10,
+        fontFamily:"Inter",
+        fontWeight:"300",
+    },
 })

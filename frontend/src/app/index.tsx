@@ -1,13 +1,22 @@
 import { View, Text, Image, StyleSheet } from 'react-native'
 import Button from '@/components/Button';
 import colors from '../../assets/colors'
-import { useRouter } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
+import { useAuthContext } from '@/providers/AuthProvider';
+import { useEffect } from 'react';
 
 const startVector = require("@assets/images/StartVector.png");
 
 const index = () => {
     const router = useRouter();
     const desc = "Begin your exciting journey of stress free night-outs & adventurous restaurant choices today";
+    const { user } = useAuthContext();
+
+    useEffect(() => {
+        if (user != null) {
+            router.push('/(tabs)/');
+        }
+    }, [user]);
 
   return (
     <View style={styles.container}>
