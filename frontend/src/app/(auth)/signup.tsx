@@ -1,12 +1,14 @@
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import colors from '@assets/colors';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Button from '@/components/Button';
-
-import api from '../api/client';
+import { signUpApi } from '../api/api';
+import { User } from '@/types';
+import { useAuthContext } from '@/providers/AuthProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const signup = () => {
   const router = useRouter();
@@ -15,17 +17,48 @@ const signup = () => {
   const [password, setPassword] = useState('');
   const [preferences, setPreferences] = useState('');
   const [restrictions, setRestrictions] = useState('');
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [error, setError] = useState('noError');
+  const { dispatch } = useAuthContext();
+
 
   const handleSignUp = async () => {
-    console.log(email, name, password, preferences, restrictions);
-    const res = await api.post('/signup', { email, password, name, preferences, restrictions })
-                            .then(res => {
-                              console.log(res.data)
-                            })
-                            .catch(error => console.log(error));
+    const user: User = {
+      email,
+      password,
+      name,
+      preferences,
+      restrictions
+    };
+
+    const resetFields = () => {
+      setName('');
+      setEmail('');
+      setPassword('');
+      setPreferences('');
+      setRestrictions('');
+      setSecureTextEntry(true);
+      setError('noError');
+    }
+
+    const json:any = await signUpApi(user);
+    const errorMsg = json?.response?.json?.error 
+    setError(errorMsg);
+    console.log(json);
+
+    if (json?.token) {
+      resetFields();
+      //set session data
+      router.push('/(tabs)/');
+      dispatch({type:'LOGIN', payload:json.user});
+      try {
+        await AsyncStorage.setItem('user', JSON.stringify(json))
+    } catch (e) {
+        console.log('Failed to save user token');
+    }
+    }
   }
 
-  
   return (
     <SafeAreaView>
       <FontAwesome name="long-arrow-left" style={styles.back} onPress={router.back}/>
@@ -36,36 +69,43 @@ const signup = () => {
           value={name}
           onChangeText={setName}
           placeholder="Jon"
-          style={styles.input}
+          style={styles.inputContainer}
         />
         <Text style={styles.label}>Email</Text>
         <TextInput 
           value={email}
-          onChangeText={setEmail}
+          onChangeText={(text) => setEmail(text.toLowerCase())} 
           placeholder="jon@gmail.com"
-          style={styles.input}
+          style={styles.inputContainer}
         />
         <Text style={styles.label}>Password</Text>
-        <TextInput 
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
-        />
+        <View style={styles.inputContainer}>
+          <TextInput 
+            value={password}
+            onChangeText={setPassword}
+            style={{flex: 1}}
+            secureTextEntry = {secureTextEntry}
+          />
+          <TouchableOpacity onPress={() => setSecureTextEntry(!secureTextEntry)}>
+            <Text style={styles.showText}>{secureTextEntry ? 'Show' : 'Hide'}</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.label}>Preferences</Text>
         <TextInput 
           value={preferences}
           onChangeText={setPreferences}
           placeholder= "Japanese, Thai"
-          style={styles.input}
+          style={styles.inputContainer}
         />
         <Text style={styles.label}>Dietary Restrictions</Text>
         <TextInput 
           value={restrictions}
           onChangeText={setRestrictions}
           placeholder= "Halal"
-          style={styles.input}
+          style={styles.inputContainer}
         />
         <Button text='Sign Up' buttonStyle={{marginTop:40}} onPress={handleSignUp} />
+        {error != 'noError'  && <Text style={[styles.label, {color:'red', marginTop:10, alignSelf:'center'}]}>{error}</Text>}
       </View>
     </SafeAreaView>
     
@@ -95,12 +135,26 @@ const styles = StyleSheet.create({
     fontSize:15,
     fontWeight:"300",
     marginTop:20,
+    marginBottom:5,
 },
-input: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    padding: 10,
-    marginTop: 5,
-    backgroundColor: 'white',
+inputContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  borderWidth: 1,
+  borderColor: 'gray',
+  padding: 12,
+  width: '100%',
+  backgroundColor: 'white',
+},
+row: {
+  flexDirection:'row', 
+  justifyContent: 'space-between', 
+  width: '100%'
+},
+showText: {
+  color: 'blue',
+  marginLeft: 10,
+  fontFamily:"Inter",
+  fontWeight:"300",
 },
 })
