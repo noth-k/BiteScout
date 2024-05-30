@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 //mongoDb uses _id so better to use same name --> part of the payload of the token
 const createToken = (_id) => {
     //1st arguemnt is id,second is secret string only known to the server
-    //3rd argument to decleare how many days the person will stay logged in 
+    //3rd argument to declare how many days the person will stay logged in 
     return jwt.sign({_id: _id}, process.env.SECRET, { expiresIn: '3d' })
 }
 
@@ -19,7 +19,7 @@ const loginUser = async (req, res) => {
         const token = createToken(user._id)
         res.status(200).json({token, user});
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.json({success: false, error: error.message})
     }
 }
 
@@ -35,7 +35,7 @@ const signupUser = async (req, res) => {
         res.status(200).json({email, token, user})
 
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.json({error: error.message})
     }
 }
 
