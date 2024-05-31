@@ -1,11 +1,13 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "jsx": "react",
     "module": "esnext",
     "allowJs": true,
     "checkJs": false,
     "strict": true,
     "baseUrl":".",
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
