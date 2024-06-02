@@ -71,7 +71,7 @@ const DiningPlaces: React.FC = () => {
       //     `/Recommendations?places=${encodeURIComponent(JSON.stringify(places))}`
       //   );
       router.push({
-        pathname: "/(tabs)/Recommendations",
+        pathname: "/home/recommendations",
         params: { places: JSON.stringify(places) },
       });
     } catch (error) {

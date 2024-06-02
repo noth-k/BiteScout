@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import colors from "@assets/colors";
 import { FontAwesome } from "@expo/vector-icons";
@@ -28,7 +28,25 @@ const login = () => {
   const [password, setPassword] = useState("");
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [error, setError] = useState("noError");
-  const { dispatch } = useAuthContext();
+  const { user, dispatch } = useAuthContext();
+
+  useEffect(() => {
+    if (user != null) {
+      router.push("/(tabs)/home/");
+    }
+  }, [user]);
+
+  const handlePress = () => {
+    setError("Feature not available yet");
+
+    // Set a timeout to clear the error message after 5 seconds
+    const timer = setTimeout(() => {
+      setError("");
+    }, 3000);
+
+    // Clear the timeout if the component unmounts to avoid memory leaks
+    return () => clearTimeout(timer);
+  };
 
   const handleLogin = async () => {
     const loginUser: LoginUser = {
@@ -41,16 +59,17 @@ const login = () => {
     };
 
     const json: any = await loginApi(loginUser);
-    const errorMsg = json?.response?.json?.error;
+    const errorMsg = json?.error;
     console.log(json);
     setError(errorMsg);
     if (json?.token) {
-      router.push("/(tabs)/");
+      router.push("../(tabs)/home/");
       resetFields();
       //set session data
+      console.log(json.user);
       dispatch({ type: "LOGIN", payload: json.user });
       try {
-        await AsyncStorage.setItem("user", JSON.stringify(json));
+        await AsyncStorage.setItem("user", JSON.stringify(json.user));
       } catch (e) {
         console.log("Failed to save user token");
       }
@@ -94,7 +113,10 @@ const login = () => {
             </TouchableOpacity>
           </View>
 
-          <Text style={styles.changePassword}>Forget your password?</Text>
+          <TouchableOpacity onPress={handlePress}>
+          <Text style={styles.changePassword} >Forget your password?</Text>
+          </TouchableOpacity>
+          
           <Button text="Log In" onPress={handleLogin} />
           {error != "noError" && (
             <Text style={[styles.label, { color: "red", alignSelf: "center" }]}>

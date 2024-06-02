@@ -19,7 +19,7 @@ const Recommendations: React.FC = () => {
       <FontAwesome
         name="long-arrow-left"
         style={styles.back}
-        onPress={() => router.push("/(tabs)")}
+        onPress={() => router.back()}
       />
       <FlatList
         data={parsedPlaces}
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: 10,
+    marginTop:40,
   },
   back: {
     fontSize: 24,
