@@ -17,7 +17,7 @@ const index = () => {
 
   useEffect(() => {
     if (user != null) {
-      router.push("/(tabs)/");
+      router.push("/(tabs)/home");
     }
   }, [user]);
 

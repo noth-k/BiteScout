@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import colors from "@assets/colors";
 import { FontAwesome } from "@expo/vector-icons";
@@ -26,7 +26,13 @@ const signup = () => {
   const [restrictions, setRestrictions] = useState("");
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [error, setError] = useState("noError");
-  const { dispatch } = useAuthContext();
+  const { user, dispatch } = useAuthContext();
+
+  useEffect(() => {
+    if (user != null) {
+      router.push("/(tabs)/");
+    }
+  }, [user]);
 
   const handleSignUp = async () => {
     const user: User = {
@@ -48,17 +54,18 @@ const signup = () => {
     };
 
     const json: any = await signUpApi(user);
-    const errorMsg = json?.response?.json?.error;
+    const errorMsg = json?.error;
     setError(errorMsg);
     console.log(json);
 
     if (json?.token) {
       resetFields();
       //set session data
-      router.push("/(tabs)/");
+      router.push("/(tabs)/home/");
+      console.log(json.user);
       dispatch({ type: "LOGIN", payload: json.user });
       try {
-        await AsyncStorage.setItem("user", JSON.stringify(json));
+        await AsyncStorage.setItem("user", JSON.stringify(json.user));
       } catch (e) {
         console.log("Failed to save user token");
       }
