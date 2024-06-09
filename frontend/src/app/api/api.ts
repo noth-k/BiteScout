@@ -12,3 +12,7 @@ export const signUpApi = (user: User) => {
 export const loginApi = (user: LoginUser) => {
     return api('login', {method: ApiType.POST, body: user})
 }
+
+export const updateApi = (user: User) => {
+    return api('update', {method: ApiType.POST, body: user})
+}

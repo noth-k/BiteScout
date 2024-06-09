@@ -35,18 +35,28 @@ const signupUser = async (req, res) => {
         res.status(200).json({email, token, user})
 
     } catch (error) {
+        console.log(error)
         res.json({error: error.message})
     }
 }
 
-const hello = async (req, res) => {
-    //to catch error: "email alr in use" or if input does not follow the Schema
-    try {
-        res.status(200).json({email: "hello"})
 
+//to update DB
+const updateUserDetails = async (req, res) => {
+    const { _id, name, preferences, restrictions } = req.body;
+
+    try {
+        const user = await User.updateOne({_id:_id}, {
+            $set: {
+                name: name,
+                preferences: preferences,
+                restrictions: restrictions,
+            }
+        } )
+        res.status(200).json({user})
     } catch (error) {
-        res.status(400).json({error: error.message})
+        res.json({error: error.message})
     }
 }
 
-module.exports = { loginUser, signupUser, hello };
+module.exports = { loginUser, signupUser, updateUserDetails };
