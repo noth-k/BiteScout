@@ -46,7 +46,7 @@ const profile = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
+      <SafeAreaView style={{backgroundColor:'white'}}>
       <View style={styles.container}>
       <FontAwesome
         name="long-arrow-left"
@@ -110,6 +110,8 @@ const styles = StyleSheet.create({
   container: {
     padding:15,
     marginTop: 10,
+    height:'100%',
+    backgroundColor:'white',
   },
   title: {
     fontFamily: 'Inter',

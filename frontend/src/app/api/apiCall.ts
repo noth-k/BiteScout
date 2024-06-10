@@ -13,7 +13,7 @@ export enum ApiType {
 }
 
 export const api = async (url: string, apiCall?: ApiCall) => {
-    const json = await ky(`http://192.168.50.72:4000/api/user/${url}`, {
+    const json = await ky(`http://54.252.240.132:4000/api/user/${url}`, {
         method: apiCall?.method || 'get',
         json: apiCall?.body
     })
