@@ -30,12 +30,13 @@ export default function Home() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
+      <SafeAreaView style={{backgroundColor:'white'}}>
         <View style={styles.container}>
           <Text style={styles.title}>Discover Food through Vibes...</Text>
           <View>
           <FlatList
             data={vibes}
+            style={{backgroundColor:'white'}}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => setVibe(`${item.name}`)} style={styles.vibeContainer}>
                 <Text style={{color: 'white'}}>
@@ -87,12 +88,14 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     padding:"10%",
+    backgroundColor:'white',
   },
   title: {
     fontSize: 35,
     fontFamily: "Inter",
     fontWeight: "bold",
     marginBottom: 5,
+    color:'black',
   },
   vibeContainer: {
     backgroundColor: colors.primary800,
@@ -108,11 +111,13 @@ const styles = StyleSheet.create({
     fontFamily: "Inter",
     fontWeight: "300",
     marginBottom: 10,
+    color:"black",
   },
   priceContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'stretch', // Make sure items stretch vertically
-    marginBottom:20
+    marginBottom:20,
+    backgroundColor:'white'
   },
 });
