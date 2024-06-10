@@ -5,6 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -61,7 +63,7 @@ const signup = () => {
     if (json?.token) {
       resetFields();
       //set session data
-      router.push("/(tabs)/home/");
+      router.push("../(tabs)/home/");
       console.log(json.user);
       dispatch({ type: "LOGIN", payload: json.user });
       try {
@@ -74,7 +76,13 @@ const signup = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         <FontAwesome
           name="long-arrow-left"
           style={styles.back}
@@ -142,6 +150,8 @@ const signup = () => {
             </Text>
           )}
         </View>
+        </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </SafeAreaProvider>
   );

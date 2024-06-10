@@ -8,4 +8,5 @@ export interface User extends LoginUser{
     name: string,
     preferences: string,
     restrictions: string,
+    _id?:string,
 }

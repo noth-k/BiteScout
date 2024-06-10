@@ -30,8 +30,3 @@ mongoose.connect(process.env.MONGO_URI)
     console.log(error);
 })
 
-// testing
-// app.get('/', function(req, res, next) {
-//     res.send("Hello world");
-// });
-

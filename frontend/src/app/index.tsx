@@ -23,7 +23,7 @@ const index = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor:'white' }}>
         <View style={styles.container}>
           <Image source={startVector} style={styles.vector} />
           <Text style={styles.welcomeText}>Welcome to</Text>
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     fontWeight: "300",
   },
   login: {
-    marginTop: 60,
+    marginTop: 40,
   },
   signUp: {
     backgroundColor: "white",

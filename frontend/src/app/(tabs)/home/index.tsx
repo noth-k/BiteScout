@@ -1,10 +1,12 @@
-import { StyleSheet, FlatList, ScrollView, TouchableOpacity } from "react-native";
+import { StyleSheet, FlatList, ScrollView, TouchableOpacity, Pressable } from "react-native";
 import { Text, View } from "@/components/Themed";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
 import Container from "@/components/Container";
 import DiningPlaces from "@/components/DiningPlaces";
 import colors from "@assets/colors";
+import { useRouter } from "expo-router";
+
 
 type Vibe = {
   name: String;
@@ -24,6 +26,7 @@ export default function Home() {
 
   const [vibe, setVibe] = useState('');
   const [price, setPrice] = useState('');
+  const router = useRouter();
 
   return (
     <SafeAreaProvider>
@@ -72,6 +75,9 @@ export default function Home() {
           <Text>Filtering feature not ready yet</Text>
           {(vibe != '') && <Text style={{ color: 'red', fontSize: 15 }}> Selected: {vibe}</Text>}
           {(price != '') && <Text style={{ color: 'red', fontSize: 15 }}> Selected: {price}</Text>}
+          <Pressable onPress={() => router.push('/home/recommend/')}>
+            <Text>Recommend</Text>
+          </Pressable>
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
