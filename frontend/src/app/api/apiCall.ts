@@ -9,11 +9,11 @@ export enum ApiType {
     GET = 'get',
     POST = 'post',
     PATCH = 'patch',
-    DELETE = 'delete'
+    DELETE = 'delete',
 }
 
 export const api = async (url: string, apiCall?: ApiCall) => {
-    const json = await ky(`http://54.252.240.132:4000/api/user/${url}`, {
+    const json = await ky(`http://localhost:4000/api/${url}`, {
         method: apiCall?.method || 'get',
         json: apiCall?.body
     })

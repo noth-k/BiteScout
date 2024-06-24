@@ -62,20 +62,15 @@ const index = () => {
         <ScrollView style={styles.main}>
           <BubbleTextComponent items={preferencesArr || []} title={'Preferences'}/>
           <BubbleTextComponent items={restrictionsArr || []} title={'Restrictions'}/>
-          
-          <Text style={{marginTop: 20, marginLeft:20, marginRight:20, fontSize:20, fontFamily:'Inter', fontWeight:'400'}}>Past Recommendations</Text>
-          <View style={styles.past}>
-            {/* some component for resturants */}
-          </View>
-          <Button
-            text="Log out"
+      
+          <Text
             onPress={() => {
               dispatch({ type: "LOGOUT", payload: null });
               router.push("/");
               logout();
             }}
-            style={{margin:'5%'}}
-          />
+            style={{margin:'5%', textAlign:'center', color:'red'}}
+          >Log out</Text>
         </ScrollView>
       </View>
     

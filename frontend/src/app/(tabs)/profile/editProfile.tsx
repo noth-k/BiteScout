@@ -23,7 +23,8 @@ const profile = () => {
     password:user?.password || 'error',
     preferences: preferences,
     restrictions: restrictions,
-    _id:user?._id || 'error'
+    _id:user?._id || 'error',
+    rooms:user?.rooms || [],
   }
 
 

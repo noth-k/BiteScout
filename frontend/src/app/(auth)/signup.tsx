@@ -43,6 +43,7 @@ const signup = () => {
       name,
       preferences,
       restrictions,
+      rooms:[]
     };
 
     const resetFields = () => {
@@ -63,7 +64,7 @@ const signup = () => {
     if (json?.token) {
       resetFields();
       //set session data
-      router.push("../(tabs)/home/");
+      router.push("../(tabs)/");
       console.log(json.user);
       dispatch({ type: "LOGIN", payload: json.user });
       try {
