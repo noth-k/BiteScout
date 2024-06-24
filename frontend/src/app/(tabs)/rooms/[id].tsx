@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, Alert, Touchable, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { fetchRoomApi } from '@/app/api/api';
-import { Room } from '@/types';
+import { fetchAllUsersApi, fetchRoomApi } from '@/app/api/api';
+import { Room, User } from '@/types';
 import colors from '@assets/colors';
 import { FontAwesome } from '@expo/vector-icons';
 import MemberAddIconComponent from '@/components/MemberAddIconComponent';
@@ -14,9 +14,12 @@ const RoomScreen = () => {
     const { user } = useAuthContext();
     const router = useRouter();
     const [roomData, setRoomData] = useState<Room | null>(null);
+    const [allUsers, setAllUsers] = useState([]);
     const [submitted, setSubmitted] = useState(false);
     const currSubmittedUsers = roomData?.submittedUsers || [];
-    const waitingList = roomData?.users.filter(user => !currSubmittedUsers.includes(user || ""));
+    const waitingList = roomData?.users.filter(user => !currSubmittedUsers.includes(user || "")) || [];
+    const waitingListUsers = allUsers.filter((user: User) => waitingList.includes(user._id || ""));
+    const roomUsers = allUsers.filter((user: User) => roomData?.users.includes(user._id));
     
     
 
@@ -42,6 +45,16 @@ const RoomScreen = () => {
         setSubmitted(true);
         currSubmittedUsers.push(user?._id || "");
     }
+
+    const handleSettings = () => {
+        router.push({
+            pathname: '/rooms/settings',
+            params: {
+                roomId: roomData?._id,
+                roomUsers: JSON.stringify(roomUsers),
+            }
+        })
+    }
     
     //fetching room details
     useEffect(() => {
@@ -50,9 +63,17 @@ const RoomScreen = () => {
             setRoomData(json.room);
         }
         getRoom();
+
+        const getUsers = async () => {
+            const users:any = await fetchAllUsersApi();
+            setAllUsers(users);
+        }
+        getUsers();
         
 
     }, [])
+
+
 
    
 
@@ -68,15 +89,16 @@ const RoomScreen = () => {
                 />
                 <Text style={styles.roomName}>{roomData?.name}</Text>
                 <FontAwesome 
-                    name= "ellipsis-h"
-                    style={styles.menu}
+                    name= "cog"
+                    style={styles.settings}
+                    onPress={handleSettings}
                     />
             </View>
             <MemberAddIconComponent onPress={handleAddFriends} iconStyle={styles.icons}/>
         <View style={styles.roomDetails}>
             <CircularProgress userCount={roomData?.users.length || 0} submitCount={roomData?.submittedUsers.length || 0} style={{marginLeft:30}}/>
             <View>
-                <Text style={styles.waitLabel} onPress={() => {router.push({pathname: '/rooms/waitlist', params: { waitingList: JSON.stringify(waitingList) }})}}>Waiting on...</Text>
+                <Text style={styles.waitLabel} onPress={() => {router.push({pathname: '/rooms/waitlist', params: { waitingListUsers: JSON.stringify(waitingListUsers) }})}}>Waiting on...</Text>
                 <TouchableOpacity style={styles.submit} disabled={submitted} onPress={handleSubmit}>
                     <Text style={styles.submitText}>Select Vibe</Text>
                 </TouchableOpacity>
@@ -118,7 +140,7 @@ const styles = StyleSheet.create({
         marginTop:'auto',
         padding:20,
     },
-    menu: {
+    settings: {
         fontSize:20,
         color:'white',
         marginTop:'auto',

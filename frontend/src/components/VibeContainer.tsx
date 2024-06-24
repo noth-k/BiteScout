@@ -35,6 +35,6 @@ const styles = StyleSheet.create({
     label: {
         color:colors.primary400,
         textAlign:'center',
-        padding:12,
+        padding:13,
     }
 })
