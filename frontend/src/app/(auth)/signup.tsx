@@ -45,7 +45,7 @@ const signup = () => {
       name,
       preferences,
       restrictions,
-      rooms: [],
+      rooms: []
     };
 
     const resetFields = () => {
