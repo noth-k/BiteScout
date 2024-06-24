@@ -45,11 +45,7 @@ const signup = () => {
       name,
       preferences,
       restrictions,
-<<<<<<< HEAD
-      rooms: []
-=======
       rooms: [],
->>>>>>> reco
     };
 
     const resetFields = () => {

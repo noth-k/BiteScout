@@ -52,8 +52,6 @@ userSchema.statics.signup = async function (email, password, name, preferences, 
   if (exists) {
     throw Error("Email already in use");
   }
-<<<<<<< HEAD
-=======
 
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
@@ -65,7 +63,6 @@ userSchema.statics.signup = async function (email, password, name, preferences, 
     preferences,
     restrictions,
     rooms:[] });
->>>>>>> reco
 
   return user;
 };

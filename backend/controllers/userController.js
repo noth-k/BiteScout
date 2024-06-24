@@ -60,6 +60,20 @@ const updateUserDetails = async (req, res) => {
     }
 }
 
+const requireAuth = async (req, res) => {
+    const { email } = req.query;
+  
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      res.json({ restrictions: user.restrictions });
+    } catch (error) {
+      res.status(500).json({ error: "Server error" });
+    }
+}
+
 //to search in add friends:
 const searchUsers = async (req, res) => {
     try {
@@ -114,4 +128,4 @@ const fetchUsers = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers };
+module.exports = { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth };
