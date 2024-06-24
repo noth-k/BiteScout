@@ -3,10 +3,25 @@ const { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetc
 
 const router = express.Router();
 
-//login route
+// get user restrictions
+router.get('/userRestrictions', requireAuth, async (req, res) => {
+  const { email } = req.query;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.json({ restrictions: user.restrictions });
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// login route
 router.post('/login', loginUser);
 
-//sign up route
+// signup route
 router.post('/signup', signupUser);
 
 // router.get('/hello', hello)
