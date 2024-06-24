@@ -1,28 +1,44 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import * as Location from "expo-location";
 import axios from "axios";
 import { useRouter } from "expo-router";
+import { useAuthContext } from "@/providers/AuthProvider"; // Import the authentication context
 
 interface Place {
   place_id: string;
   name: string;
   vicinity: string;
+  reviews: string;
+  description: string;
+  website: string;
+  types: string[];
+  price_level: number;
 }
 
-const DiningPlaces: React.FC = () => {
+interface Props {
+  selectedPrice: string;
+}
+
+const DiningPlaces: React.FC<Props> = ({ selectedPrice }) => {
+  const { user } = useAuthContext(); // Get the current user from the authentication context
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
     null
-  ); // stores the user's current lat and lng as an object. initially set to null.
-  const [places, setPlaces] = useState<Place[]>([]); // stores an array of restaurants fetched from places API. initially set to an empty array.
-  const [loading, setLoading] = useState(false); // if data loaded or not
+  );
+  const [places, setPlaces] = useState<Place[]>([]);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     requestLocationPermission();
-  }, []); // hook that runs when com mounts => ask user for location permissions
+  }, []);
 
-  // asking user for location permissions
   const requestLocationPermission = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -37,90 +53,209 @@ const DiningPlaces: React.FC = () => {
     });
   };
 
-  // use user curr location and get restauarants within 5km radius
+  const fetchNearbyPlaces = async (
+    lat: number,
+    lng: number,
+    radius: number,
+    keyword: string
+  ) => {
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/nearbysearch/json`,
+      {
+        params: {
+          location: `${lat},${lng}`,
+          radius,
+          type: "restaurant",
+          keyword, // Use the keyword directly in the API call
+          key: "AIzaSyBsZsI8YQPYyEDGh1sPhaTeu4wNhRXvk3Y", // use environment variable for the API key
+        },
+        timeout: 50000, // increase timeout to 30 seconds, for bigger search radius
+      }
+    );
+
+    return response.data.results.map((place: any) => ({
+      place_id: place.place_id,
+      name: place.name,
+      vicinity: place.vicinity,
+    }));
+  };
+
+  const fetchPlaceDetails = async (placeId: string) => {
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/details/json`,
+      {
+        params: {
+          place_id: placeId,
+          key: "AIzaSyBsZsI8YQPYyEDGh1sPhaTeu4wNhRXvk3Y", // use environment variable for the API key
+        },
+        timeout: 50000,
+      }
+    );
+
+    const result = response.data.result;
+    return {
+      place_id: result.place_id,
+      name: result.name,
+      vicinity: result.vicinity,
+      reviews: result.reviews
+        ? result.reviews.map((review: any) => review.text).join(" ")
+        : "",
+      description: result.editorial_summary
+        ? result.editorial_summary.overview
+        : "",
+      website: result.website || "",
+      types: result.types || [],
+      price_level: result.price_level || 0,
+    };
+  };
+
   const fetchRecommendations = async () => {
     if (!location) {
       alert("Unable to fetch location. Please try again.");
       return;
     }
 
+    if (!user || !user.email) {
+      alert("Unable to fetch user information. Please log in.");
+      return;
+    }
+
     const { lat, lng } = location;
-    const radius = 5000; // 5 km radius
 
     setLoading(true);
 
     try {
-      const response = await axios.get(
-        `https://maps.googleapis.com/maps/api/place/nearbysearch/json`,
-        {
-          params: {
-            location: `${lat},${lng}`,
-            radius,
-            type: "restaurant",
-            key: "AIzaSyBsZsI8YQPYyEDGh1sPhaTeu4wNhRXvk3Y",
-          },
-        }
+      // fetch results with different radii
+      const radius1km = await fetchNearbyPlaces(
+        lat,
+        lng,
+        1000,
+        user.restrictions
       );
-      const places: Place[] = response.data.results.map((result: any) => ({
-        place_id: result.place_id,
-        name: result.name,
-        vicinity: result.vicinity,
-      }));
-      setPlaces(places);
-      //   router.push(
-      //     `/Recommendations?places=${encodeURIComponent(JSON.stringify(places))}`
-      //   );
+      const radius2km = await fetchNearbyPlaces(
+        lat,
+        lng,
+        2000,
+        user.restrictions
+      );
+      // const radius4km = await fetchNearbyPlaces(
+      //   lat,
+      //   lng,
+      //   4000,
+      //   user.restrictions
+      // );
+      const radius5km = await fetchNearbyPlaces(
+        lat,
+        lng,
+        5000,
+        user.restrictions
+      );
+
+      // combine and remove duplicates
+      const allPlaces = [...radius1km, ...radius2km, ...radius5km];
+      const uniquePlaces = Array.from(
+        new Map(allPlaces.map((place) => [place.place_id, place])).values()
+      );
+
+      const detailedPlaces = await Promise.all(
+        uniquePlaces.map((place) => fetchPlaceDetails(place.place_id))
+      );
+
+      console.log("Detailed places fetched:", detailedPlaces);
+
+      const userRestrictions = user.restrictions; // Directly access user restrictions
+      const filteredPlaces = filterPlacesByRestrictions(
+        detailedPlaces,
+        userRestrictions
+      );
+
+      const priceFilteredPlaces = filterPlacesByPrice(
+        filteredPlaces,
+        selectedPrice
+      );
+
+      setPlaces(priceFilteredPlaces);
+
+      // Navigate to Recommendations with the filtered places
       router.push({
-        pathname: "/home/recommendations",
-        params: { places: JSON.stringify(places) },
+        pathname: "/(tabs)/home/recommendations",
+        params: { places: JSON.stringify(priceFilteredPlaces) },
       });
     } catch (error) {
       console.error(error);
-      alert("Error fetching recommendations");
+      alert("Failed to fetch recommendations. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
+  const filterPlacesByRestrictions = (
+    places: Place[],
+    restrictions: string
+  ) => {
+    if (restrictions === "Nil") {
+      return places;
+    }
+    const restrictionsLower = restrictions.toLowerCase();
+    return places.filter((place) => {
+      const reviews = place.reviews || "";
+      const description = place.description || "";
+      const website = place.website || "";
+      const types = place.types.join(" ").toLowerCase();
+      const name = place.name.toLowerCase();
+      const vicinity = place.vicinity.toLowerCase();
+      return (
+        reviews.toLowerCase().includes(restrictionsLower) ||
+        description.toLowerCase().includes(restrictionsLower) ||
+        website.toLowerCase().includes(restrictionsLower) ||
+        types.includes(restrictionsLower) ||
+        name.includes(restrictionsLower) ||
+        vicinity.includes(restrictionsLower)
+      );
+    });
+  };
+
+  const filterPlacesByPrice = (places: Place[], selectedPrice: string) => {
+    return places.filter((place) => {
+      switch (selectedPrice) {
+        case "Less than $10":
+          return place.price_level !== undefined && place.price_level <= 1;
+        case "Less than $20":
+          return place.price_level !== undefined && place.price_level <= 2;
+        case "Less than $50":
+          return place.price_level !== undefined && place.price_level <= 3;
+        default:
+          return true;
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.recommendations}>Dining Places Recommendation</Text>
+      <Text style={styles.recommendations}>Dining Places</Text>
       <TouchableOpacity
         style={styles.recommendButton}
         onPress={fetchRecommendations}
-        disabled={loading}
       >
-        <Text style={styles.recommendButtonText}>Recommend now!!!</Text>
+        <Text style={styles.recommendButtonText}>Recommend Now!!!</Text>
       </TouchableOpacity>
-      {/* {loading ? (
-        <Text>Loading...</Text>
-      ) : (
-        <FlatList
-          data={places}
-          keyExtractor={(item) => item.place_id}
-          renderItem={({ item }) => (
-            <View style={styles.placeItem}>
-              <Text style={styles.placeName}>{item.name}</Text>
-              <Text style={styles.placeAddress}>{item.vicinity}</Text>
-            </View>
-          )}
-        />
-      )} */}
+      {loading && <ActivityIndicator size="large" color="#0000ff" />}
     </View>
   );
-}; // display results in flatlist, for now just text later can change to clickables
+};
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
     paddingBottom: 20,
+    alignItems: "center",
   },
   recommendations: {
     fontSize: 20,
     marginTop: 10,
     fontFamily: "Inter",
-    fontWeight: "300",
+    fontWeight: "400",
     paddingBottom: 10,
+    alignSelf: "center",
   },
   recommendButton: {
     backgroundColor: "#001f3f",
@@ -128,6 +263,7 @@ const styles = StyleSheet.create({
     margin: 5,
     alignItems: "center",
     borderRadius: 5,
+    width: "90%",
   },
   recommendButtonText: {
     color: "#fff",

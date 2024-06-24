@@ -7,7 +7,6 @@ import InputField from '@/components/InputField';
 import MemberListItem from '@/components/MemberListItem';
 import MemberAddIconComponent from '@/components/MemberAddIconComponent';
 import { useAuthContext } from '@/providers/AuthProvider';
-import Button from '@/components/Button';
 import { Room } from '@/types';
 import { useSelectedUsersContext } from '@/providers/SelectedUsersProvider';
 import { createRoomApi, updateRoomsApi, fetchUserDataApi } from "../../api/api";

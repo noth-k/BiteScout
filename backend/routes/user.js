@@ -1,12 +1,15 @@
 const express = require('express');
-const { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers  } = require('../controllers/userController');
+const { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth  } = require('../controllers/userController');
 
 const router = express.Router();
 
-//login route
+// get user restrictions
+router.get('/userRestrictions', requireAuth);
+
+// login route
 router.post('/login', loginUser);
 
-//sign up route
+// signup route
 router.post('/signup', signupUser);
 
 // router.get('/hello', hello)

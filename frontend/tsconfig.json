@@ -6,18 +6,30 @@
     "allowJs": true,
     "checkJs": false,
     "strict": true,
-    "baseUrl":".",
+    "baseUrl": ".",
     "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
       "@assets/*": ["assets/*"]
-    },
+    }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "src/context/AuthContext.js", "src/hooks/useAuthContext.js", "src/hooks/useSignUp.js"  ]
+    "expo-env.d.ts",
+    "src/context/AuthContext.js",
+    "src/hooks/useAuthContext.js",
+    "src/hooks/useSignUp.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js",
+    "jest.config.js"
+  ]
 }

@@ -53,9 +53,6 @@ export default function TabTwoScreen() {
       {displayedNames.length == 0 && <EmptyRooms/>}
       </ScrollView>}
 
-    
-
-     
     </View>
   );
 }

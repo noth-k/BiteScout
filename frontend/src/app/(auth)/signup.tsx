@@ -5,8 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
-  KeyboardAvoidingView,
-  Platform,
+  Modal,
+  Button as RNButton,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -18,16 +18,18 @@ import { signUpApi } from "../api/api";
 import { User } from "@/types";
 import { useAuthContext } from "@/providers/AuthProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Picker } from "@react-native-picker/picker"; // Correct import for Picker
 
 const signup = () => {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [preferences, setPreferences] = useState("");
-  const [restrictions, setRestrictions] = useState("");
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const [error, setError] = useState("noError");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [preferences, setPreferences] = useState<string>("");
+  const [restrictions, setRestrictions] = useState<string>("Nil");
+  const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
+  const [error, setError] = useState<string>("noError");
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const { user, dispatch } = useAuthContext();
 
   useEffect(() => {
@@ -43,7 +45,7 @@ const signup = () => {
       name,
       preferences,
       restrictions,
-      rooms:[]
+      rooms: [],
     };
 
     const resetFields = () => {
@@ -51,7 +53,7 @@ const signup = () => {
       setEmail("");
       setPassword("");
       setPreferences("");
-      setRestrictions("");
+      setRestrictions("Nil"); // default nil
       setSecureTextEntry(true);
       setError("noError");
     };
@@ -63,54 +65,44 @@ const signup = () => {
 
     if (json?.token) {
       resetFields();
-      //set session data
-      router.push("../(tabs)/");
+      router.push("/(tabs)/home/");
       console.log(json.user);
       dispatch({ type: "LOGIN", payload: json.user });
       try {
         await AsyncStorage.setItem("user", JSON.stringify(json.user));
       } catch (e) {
-        console.log("Failed to save user token");
+        console.log(e);
       }
     }
   };
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      >
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <FontAwesome
-          name="long-arrow-left"
-          style={styles.back}
-          onPress={router.back}
-        />
-        <View style={styles.container}>
-          <Text style={styles.title}>Lets get you started</Text>
+      <SafeAreaView>
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.title}>Sign Up</Text>
           <Text style={styles.label}>Name</Text>
           <TextInput
             value={name}
             onChangeText={setName}
-            placeholder="Jon"
+            placeholder="John Doe"
             style={styles.inputContainer}
           />
           <Text style={styles.label}>Email</Text>
           <TextInput
             value={email}
-            onChangeText={(text) => setEmail(text.toLowerCase())}
-            placeholder="jon@gmail.com"
+            onChangeText={setEmail}
+            placeholder="example@example.com"
             style={styles.inputContainer}
+            keyboardType="email-address"
           />
           <Text style={styles.label}>Password</Text>
-          <View style={styles.inputContainer}>
+          <View style={styles.row}>
             <TextInput
               value={password}
               onChangeText={setPassword}
-              style={{ flex: 1 }}
+              placeholder="******"
+              style={[styles.inputContainer, { flex: 1 }]}
               secureTextEntry={secureTextEntry}
             />
             <TouchableOpacity
@@ -129,12 +121,39 @@ const signup = () => {
             style={styles.inputContainer}
           />
           <Text style={styles.label}>Dietary Restrictions</Text>
-          <TextInput
-            value={restrictions}
-            onChangeText={setRestrictions}
-            placeholder="Halal"
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
             style={styles.inputContainer}
-          />
+          >
+            <Text>{restrictions}</Text>
+          </TouchableOpacity>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>
+                  Select Dietary Restriction
+                </Text>
+                <Picker
+                  selectedValue={restrictions}
+                  onValueChange={(itemValue: string) =>
+                    setRestrictions(itemValue)
+                  }
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Halal" value="Halal" />
+                  <Picker.Item label="Vegetarian" value="Vegetarian" />
+                  <Picker.Item label="Vegan" value="Vegan" />
+                  <Picker.Item label="Nil" value="Nil" />
+                </Picker>
+                <RNButton title="Done" onPress={() => setModalVisible(false)} />
+              </View>
+            </View>
+          </Modal>
           <Button
             text="Sign Up"
             buttonStyle={{ marginTop: 40, marginBottom: 80 }}
@@ -150,9 +169,7 @@ const signup = () => {
               {error}
             </Text>
           )}
-        </View>
         </ScrollView>
-        </KeyboardAvoidingView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
@@ -202,5 +219,25 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontFamily: "Inter",
     fontWeight: "300",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    marginBottom: 10,
+  },
+  picker: {
+    width: "100%", // need to add this otherwise picker might not be visible idk also
   },
 });

@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
+import { AuthContextProvider } from "@/providers/AuthProvider"; // Import AuthContextProvider
 
 interface Place {
   place_id: string;
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     padding: 10,
-    marginTop:40,
+    marginTop: 40,
   },
   back: {
     fontSize: 24,
@@ -61,4 +62,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Recommendations;
+const WrappedRecommendations = () => (
+  <AuthContextProvider>
+    <Recommendations />
+  </AuthContextProvider>
+);
+
+export default WrappedRecommendations;

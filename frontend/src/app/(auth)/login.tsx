@@ -80,62 +80,64 @@ const login = () => {
 
   return (
     <SafeAreaProvider>
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
-      >
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <FontAwesome
-            name="long-arrow-left"
-            style={styles.back}
-            onPress={router.back}
-          />
-          <View style={styles.container}>
-            <Image source={loginVector} style={styles.vector} />
-            <Text style={styles.title}>Login</Text>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              value={email}
-              onChangeText={(text) => setEmail(text.toLowerCase())}
-              placeholder="jon@gmail.com"
-              style={styles.inputContainer}
+      <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        >
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <FontAwesome
+              name="long-arrow-left"
+              style={styles.back}
+              onPress={router.back}
             />
-
-            <Text style={styles.label}>Password</Text>
-
-            <View style={styles.inputContainer}>
+            <View style={styles.container}>
+              <Image source={loginVector} style={styles.vector} />
+              <Text style={styles.title}>Login</Text>
+              <Text style={styles.label}>Email</Text>
               <TextInput
-                value={password}
-                onChangeText={setPassword}
-                style={{ flex: 1 }}
-                secureTextEntry={secureTextEntry}
+                value={email}
+                onChangeText={(text) => setEmail(text.toLowerCase())}
+                placeholder="jon@gmail.com"
+                style={styles.inputContainer}
               />
-              <TouchableOpacity
-                onPress={() => setSecureTextEntry(!secureTextEntry)}
-              >
-                <Text style={styles.showText}>
-                  {secureTextEntry ? "Show" : "Hide"}
-                </Text>
+
+              <Text style={styles.label}>Password</Text>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  style={{ flex: 1 }}
+                  secureTextEntry={secureTextEntry}
+                />
+                <TouchableOpacity
+                  onPress={() => setSecureTextEntry(!secureTextEntry)}
+                >
+                  <Text style={styles.showText}>
+                    {secureTextEntry ? "Show" : "Hide"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity onPress={handlePress}>
+                <Text style={styles.changePassword}>Forget your password?</Text>
               </TouchableOpacity>
+
+              <Button text="Log In" onPress={handleLogin} />
+              {error != "noError" && (
+                <Text
+                  style={[styles.label, { color: "red", alignSelf: "center" }]}
+                >
+                  {error}
+                </Text>
+              )}
             </View>
-
-            <TouchableOpacity onPress={handlePress}>
-              <Text style={styles.changePassword}>Forget your password?</Text>
-            </TouchableOpacity>
-
-            <Button text="Log In" onPress={handleLogin} />
-            {error != "noError" && (
-              <Text style={[styles.label, { color: "red", alignSelf: "center" }]}>
-                {error}
-              </Text>
-            )}
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  </SafeAreaProvider>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
