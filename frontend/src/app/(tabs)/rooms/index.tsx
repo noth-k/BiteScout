@@ -27,7 +27,6 @@ export default function TabTwoScreen() {
     getRoomNames();
 
   }, [roomIds])
-  console.log("names:",names);
   
   //filter using the ids that are in roomsId
   displayedNames = names.filter((item) => roomIds.includes(item._id || "error"));
