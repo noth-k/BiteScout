@@ -3,7 +3,8 @@ require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/user');
-const placesRoutes = require('./routes/places')
+const placesRoutes = require('./routes/places');
+const roomRoutes = require('./routes/room');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 //routes
+app.use('/api/room', roomRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/places', placesRoutes); 
 
@@ -29,9 +31,4 @@ mongoose.connect(process.env.MONGO_URI)
 .catch((error) => {
     console.log(error);
 })
-
-// testing
-// app.get('/', function(req, res, next) {
-//     res.send("Hello world");
-// });
 

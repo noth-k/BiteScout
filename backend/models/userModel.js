@@ -5,29 +5,34 @@ const validator = require("validator");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String, 
+        required: true,
+    },
+    name: {
+        type: String,
+        required: true,
+    }, 
+    preferences: {
+        type: String,
+        required: true,
+    },
+    restrictions: {
+        type: String,
+        required:true,
+        enum: ["Halal", "Vegetarian", "Vegan", "Nil"],
+    },
+    rooms: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'Room',
+      default: []
   },
-  password: {
-    type: String,
-    required: true,
-  },
-  name: {
-    type: String,
-    required: true,
-  },
-  preferences: {
-    type: String,
-    required: true,
-  },
-  restrictions: {
-    type: String,
-    required: true,
-    enum: ["Halal", "Vegetarian", "Vegan", "Nil"],
-  },
-});
+})
 
 // static signup method
 userSchema.statics.signup = async function (email, password, name, preferences, restrictions) {
@@ -56,7 +61,7 @@ userSchema.statics.signup = async function (email, password, name, preferences, 
     name,
     preferences,
     restrictions,
-  });
+    rooms:[] });
 
   return user;
 };

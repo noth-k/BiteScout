@@ -1,7 +1,5 @@
 const express = require('express');
-const { loginUser, signupUser, hello } = require('../controllers/userController');
-const User = require('../models/userModel');
-const requireAuth = require('../middleware/auth'); // auth middleware
+const { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers  } = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -26,6 +24,21 @@ router.post('/login', loginUser);
 // signup route
 router.post('/signup', signupUser);
 
-router.get('/hello', hello);
+// router.get('/hello', hello)
+
+//update user details
+router.post('/update', updateUserDetails);
+
+//search for user
+router.post('/search', searchUsers);
+
+//update room details
+router.post('/roomsUpdate', updateRooms);
+
+//fetch user data
+router.post('/data', fetchUserData);
+
+//fetch all users
+router.post('/allData', fetchUsers )
 
 module.exports = router;

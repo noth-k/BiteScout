@@ -1,77 +1,77 @@
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  Button as RNButton,
 } from "react-native";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import colors from "@assets/colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import Button from "@/components/Button";
-import { LoginUser } from "@/types";
-import { loginApi } from "../api/api";
+import { signUpApi } from "../api/api";
+import { User } from "@/types";
 import { useAuthContext } from "@/providers/AuthProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React from "react";
-// import { ScrollView } from "react-native-reanimated/lib/typescript/Animated";
+import { Picker } from "@react-native-picker/picker"; // Correct import for Picker
 
-const loginVector = require("@assets/images/LoginVector.png");
-
-const login = () => {
+const signup = () => {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const [error, setError] = useState("noError");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [preferences, setPreferences] = useState<string>("");
+  const [restrictions, setRestrictions] = useState<string>("Nil");
+  const [secureTextEntry, setSecureTextEntry] = useState<boolean>(true);
+  const [error, setError] = useState<string>("noError");
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const { user, dispatch } = useAuthContext();
 
   useEffect(() => {
     if (user != null) {
-      router.push("/(tabs)/home/");
+      router.push("/(tabs)/");
     }
   }, [user]);
 
-  const handlePress = () => {
-    setError("Feature not available yet");
-
-    // Set a timeout to clear the error message after 5 seconds
-    const timer = setTimeout(() => {
-      setError("");
-    }, 3000);
-
-    // Clear the timeout if the component unmounts to avoid memory leaks
-    return () => clearTimeout(timer);
-  };
-
-  const handleLogin = async () => {
-    const loginUser: LoginUser = {
+  const handleSignUp = async () => {
+    const user: User = {
       email,
       password,
-    };
-    const resetFields = () => {
-      setEmail("");
-      setPassword("");
+      name,
+      preferences,
+      restrictions,
+      rooms: [],
     };
 
-    const json: any = await loginApi(loginUser);
+    const resetFields = () => {
+      setName("");
+      setEmail("");
+      setPassword("");
+      setPreferences("");
+      setRestrictions("Nil"); // default nil
+      setSecureTextEntry(true);
+      setError("noError");
+    };
+
+    const json: any = await signUpApi(user);
     const errorMsg = json?.error;
-    console.log(json);
     setError(errorMsg);
+    console.log(json);
+
     if (json?.token) {
-      router.push("../(tabs)/home/");
       resetFields();
-      //set session data
+      router.push("/(tabs)/home/");
       console.log(json.user);
       dispatch({ type: "LOGIN", payload: json.user });
       try {
         await AsyncStorage.setItem("user", JSON.stringify(json.user));
       } catch (e) {
-        console.log("Failed to save user token");
+        console.log(e);
       }
     }
   };
@@ -79,29 +79,30 @@ const login = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView>
-        <FontAwesome
-          name="long-arrow-left"
-          style={styles.back}
-          onPress={router.back}
-        />
-        <View style={styles.container}>
-          <Image source={loginVector} style={styles.vector} />
-          <Text style={styles.title}>Login</Text>
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.title}>Sign Up</Text>
+          <Text style={styles.label}>Name</Text>
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            placeholder="John Doe"
+            style={styles.inputContainer}
+          />
           <Text style={styles.label}>Email</Text>
           <TextInput
             value={email}
-            onChangeText={(text) => setEmail(text.toLowerCase())}
-            placeholder="jon@gmail.com"
+            onChangeText={setEmail}
+            placeholder="example@example.com"
             style={styles.inputContainer}
+            keyboardType="email-address"
           />
-
           <Text style={styles.label}>Password</Text>
-
-          <View style={styles.inputContainer}>
+          <View style={styles.row}>
             <TextInput
               value={password}
               onChangeText={setPassword}
-              style={{ flex: 1 }}
+              placeholder="******"
+              style={[styles.inputContainer, { flex: 1 }]}
               secureTextEntry={secureTextEntry}
             />
             <TouchableOpacity
@@ -112,44 +113,85 @@ const login = () => {
               </Text>
             </TouchableOpacity>
           </View>
-
-          <TouchableOpacity onPress={handlePress}>
-            <Text style={styles.changePassword}>Forget your password?</Text>
+          <Text style={styles.label}>Preferences</Text>
+          <TextInput
+            value={preferences}
+            onChangeText={setPreferences}
+            placeholder="Japanese, Thai"
+            style={styles.inputContainer}
+          />
+          <Text style={styles.label}>Dietary Restrictions</Text>
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            style={styles.inputContainer}
+          >
+            <Text>{restrictions}</Text>
           </TouchableOpacity>
-
-          <Button text="Log In" onPress={handleLogin} />
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>
+                  Select Dietary Restriction
+                </Text>
+                <Picker
+                  selectedValue={restrictions}
+                  onValueChange={(itemValue: string) =>
+                    setRestrictions(itemValue)
+                  }
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Halal" value="Halal" />
+                  <Picker.Item label="Vegetarian" value="Vegetarian" />
+                  <Picker.Item label="Vegan" value="Vegan" />
+                  <Picker.Item label="Nil" value="Nil" />
+                </Picker>
+                <RNButton title="Done" onPress={() => setModalVisible(false)} />
+              </View>
+            </View>
+          </Modal>
+          <Button
+            text="Sign Up"
+            buttonStyle={{ marginTop: 40, marginBottom: 80 }}
+            onPress={handleSignUp}
+          />
           {error != "noError" && (
-            <Text style={[styles.label, { color: "red", alignSelf: "center" }]}>
+            <Text
+              style={[
+                styles.label,
+                { color: "red", marginTop: 10, alignSelf: "center" },
+              ]}
+            >
               {error}
             </Text>
           )}
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 };
 
-export default login;
+export default signup;
 
 const styles = StyleSheet.create({
   back: {
     marginLeft: 20,
     fontSize: 30,
+    color: colors.primary800,
   },
   container: {
-    alignSelf: "center",
-    width: "80%",
-  },
-  vector: {
-    height: 340,
-    width: 220,
-    alignSelf: "center",
+    padding: "10%",
   },
   title: {
     fontFamily: "Inter",
     fontSize: 40,
     fontWeight: "bold",
     color: colors.primary800,
+    marginBottom: 20,
   },
   label: {
     fontFamily: "Inter",
@@ -157,14 +199,6 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     marginTop: 20,
     marginBottom: 5,
-  },
-  changePassword: {
-    textAlign: "right",
-    fontFamily: "Inter",
-    fontWeight: "300",
-    color: colors.primary800,
-    marginBottom: 15,
-    marginTop: 5,
   },
   inputContainer: {
     flexDirection: "row",
@@ -175,10 +209,35 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "white",
   },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
   showText: {
-    color: colors.primary800,
+    color: "blue",
     marginLeft: 10,
     fontFamily: "Inter",
     fontWeight: "300",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    marginBottom: 10,
+  },
+  picker: {
+    width: "100%", // need to add this otherwise picker might not be visible idk also
   },
 });

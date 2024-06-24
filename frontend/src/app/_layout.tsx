@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 import { useColorScheme } from "../components/useColorScheme";
 import { AuthContextProvider } from "@/providers/AuthProvider";
+import { SelectedUsersProvider } from "@/providers/SelectedUsersProvider";
+
 import React from "react";
 
 export {
@@ -55,6 +57,7 @@ function RootLayoutNav() {
 
   return (
     <AuthContextProvider>
+      <SelectedUsersProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -63,6 +66,7 @@ function RootLayoutNav() {
           <Stack.Screen name="modal" options={{ presentation: "modal" }} />
         </Stack>
       </ThemeProvider>
+      </SelectedUsersProvider>
     </AuthContextProvider>
   );
 }
