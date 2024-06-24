@@ -28,10 +28,10 @@ const userSchema = new Schema({
         enum: ["Halal", "Vegetarian", "Vegan", "Nil"],
     },
     rooms: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Room',
-        default: []
-    },
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: 'Room',
+      default: []
+  },
 })
   
 
@@ -52,16 +52,23 @@ userSchema.statics.signup = async function (email, password, name, preferences, 
   if (exists) {
     throw Error("Email already in use");
   }
+<<<<<<< HEAD
+=======
 
-    //adding a hash constant behind the password for better protection
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt);
 
-    const user = await this.create({ email, password: hash, name, preferences, restrictions, rooms:[] });
+  const user = await this.create({
+    email,
+    password: hash,
+    name,
+    preferences,
+    restrictions,
+    rooms:[] });
+>>>>>>> reco
 
-    return user;
-
-}
+  return user;
+};
 
 // static login method
 userSchema.statics.login = async function (email, password) {

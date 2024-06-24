@@ -21,4 +21,9 @@ export interface Room {
     submittedUsers: string[],
     pastRecommendation: string[],
     
+<<<<<<< HEAD
 }
+=======
+    _id?:string,
+}
+>>>>>>> reco
