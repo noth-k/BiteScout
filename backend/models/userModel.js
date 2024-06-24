@@ -25,7 +25,12 @@ const userSchema = new Schema({
     restrictions: {
         type: String,
         required:true,
-    }
+    },
+    rooms: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Room',
+        default: []
+    },
 })
 
 //static signup method
@@ -54,7 +59,7 @@ userSchema.statics.signup = async function(email, password, name, preferences, r
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(password, salt);
 
-    const user = await this.create({ email, password: hash, name, preferences, restrictions });
+    const user = await this.create({ email, password: hash, name, preferences, restrictions, rooms:[] });
 
     return user;
 

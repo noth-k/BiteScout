@@ -9,4 +9,15 @@ export interface User extends LoginUser{
     preferences: string,
     restrictions: string,
     _id?:string,
+    rooms:string[]
+}
+
+export interface Room {
+    _id?:string,
+    name: string,
+    users: (string | undefined)[],
+    restrictions:string[],
+    submittedUsers: string[],
+    pastRecommendation: string[],
+    
 }
