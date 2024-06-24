@@ -1,112 +1,159 @@
-import { StyleSheet, FlatList, ScrollView, TouchableOpacity } from "react-native";
-import { Text, View } from "@/components/Themed";
+import {
+  StyleSheet,
+  FlatList,
+  ScrollView,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Text } from "@/components/Themed";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
-import Container from "@/components/Container";
 import DiningPlaces from "@/components/DiningPlaces";
 import colors from "@assets/colors";
+import { AuthContextProvider } from "@/providers/AuthProvider";
 
 type Vibe = {
   name: String;
 };
 
-export default function Home() {
-  const vibes: Vibe[] = [
-    { name: "Cozy" },
-    { name: "Modern" },
-    { name: "Casual" },
-    { name: "Elegant" },
-    { name: "Lively" },
-    { name: "Scenic" },
-    { name: "Authentic" },
-    { name: "Convenient" },
-  ];
+const vibes: Vibe[] = [
+  { name: "Cozy" },
+  { name: "Modern" },
+  { name: "Casual" },
+  { name: "Elegant" },
+  { name: "Lively" },
+  { name: "Scenic" },
+  { name: "Authentic" },
+  { name: "Convenient" },
+];
 
-  const [vibe, setVibe] = useState('');
-  const [price, setPrice] = useState('');
+const priceOptions = [
+  "Any price",
+  "Less than $10",
+  "Less than $20",
+  "Less than $50",
+];
+
+export default function App() {
+  const [vibe, setVibe] = useState("");
+  const [price, setPrice] = useState("");
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView>
-        <View style={styles.container}>
-          <Text style={styles.title}>Discover Food through Vibes...</Text>
-          <View>
-          <FlatList
-            data={vibes}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => setVibe(`${item.name}`)} style={styles.vibeContainer}>
-                <Text style={{color: 'white'}}>
-                  {item.name}
-                </Text>
-                {/* <Container item={item.name} buttonStyle={{ height: 40, width: 120 }} /> */}
-              </TouchableOpacity>
+    <AuthContextProvider>
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1 }}>
+          <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <Text style={styles.title}>Discover Food through Vibes...</Text>
+            <View style={styles.vibesContainer}>
+              <FlatList
+                data={vibes}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => setVibe(`${item.name}`)}
+                    style={[
+                      styles.vibeButton,
+                      vibe === item.name && styles.selectedVibeButton,
+                    ]}
+                  >
+                    <Text style={styles.vibeButtonText}>{item.name}</Text>
+                  </TouchableOpacity>
+                )}
+                numColumns={2}
+                contentContainerStyle={{
+                  gap: 20,
+                }}
+                columnWrapperStyle={{ justifyContent: "space-between" }}
+              />
+            </View>
+            <Text style={styles.price}>Price Range</Text>
+            <View style={styles.priceOptionsContainer}>
+              {priceOptions.map((option) => (
+                <TouchableOpacity
+                  key={option}
+                  style={[
+                    styles.priceOption,
+                    price === option && styles.selectedPriceOption,
+                  ]}
+                  onPress={() => setPrice(option)}
+                >
+                  <Text style={styles.priceOptionText}>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <DiningPlaces selectedPrice={price} />
+            {vibe != "" && (
+              <Text style={{ color: "red", fontSize: 15 }}>
+                Selected: {vibe}
+              </Text>
             )}
-            numColumns={2}
-            contentContainerStyle={{
-              gap: 30,
-              padding: 10,
-              marginTop: 20,
-              flexDirection: "column",
-            }}
-            columnWrapperStyle={{ alignSelf: "center", gap: 30 }}
-          />
-          </View>
-          <Text style={styles.price}>Price Range</Text>
-          <View style={styles.priceContainer}>
-            <TouchableOpacity style={{ flex:1, marginHorizontal: 5, height: 38}} onPress={() => setPrice('$')}>
-            <Container item="$" />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={{ flex:1, marginHorizontal: 5 }} onPress={() => setPrice('$$')}>
-            <Container item="$$"/>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={{ flex:1, marginHorizontal: 5 }} onPress={() => setPrice('$$$')}>
-            <Container item="$$$" />
-            </TouchableOpacity>
-            
-          </View>
-
-          {/* <Button text="Recommend" buttonStyle={{ marginTop: 70 }} /> */}
-          <DiningPlaces></DiningPlaces>
-          <Text>Filtering feature not ready yet</Text>
-          {(vibe != '') && <Text style={{ color: 'red', fontSize: 15 }}> Selected: {vibe}</Text>}
-          {(price != '') && <Text style={{ color: 'red', fontSize: 15 }}> Selected: {price}</Text>}
-        </View>
-      </SafeAreaView>
-    </SafeAreaProvider>
+            {price != "" && (
+              <Text style={{ color: "red", fontSize: 15, paddingBottom: 20 }}>
+                Selected: {price}
+              </Text>
+            )}
+          </ScrollView>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </AuthContextProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding:"10%",
+  scrollContainer: {
+    padding: "5%",
   },
   title: {
     fontSize: 35,
     fontFamily: "Inter",
     fontWeight: "bold",
-    marginBottom: 5,
+    marginBottom: 20,
+    alignSelf: "center",
   },
-  vibeContainer: {
-    backgroundColor: colors.primary800,
-    padding:12,
-    width:120,
-    alignItems:"center",
-    justifyContent:'center',
-    borderRadius:5,
+  vibesContainer: {
+    marginBottom: 20,
+  },
+  vibeButton: {
+    backgroundColor: "#d3d3d3",
+    padding: 12,
+    width: "45%",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 5,
+  },
+  selectedVibeButton: {
+    backgroundColor: "#001f3f",
+  },
+  vibeButtonText: {
+    color: "#fff",
+    fontSize: 16,
   },
   price: {
-    fontSize: 18,
-    marginTop: 25,
+    fontSize: 20,
     fontFamily: "Inter",
-    fontWeight: "300",
+    fontWeight: "400",
     marginBottom: 10,
+    alignSelf: "center",
   },
-  priceContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'stretch', // Make sure items stretch vertically
-    marginBottom:20
+  priceOptionsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  priceOption: {
+    backgroundColor: "#d3d3d3",
+    padding: 12,
+    width: "45%",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 5,
+    marginVertical: 5,
+  },
+  selectedPriceOption: {
+    backgroundColor: "#001f3f",
+  },
+  priceOptionText: {
+    color: "#fff",
+    fontSize: 16,
   },
 });

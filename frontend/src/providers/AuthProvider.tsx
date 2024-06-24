@@ -10,10 +10,10 @@ import { User } from "../types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React from "react";
 
-type AuthData = {
+interface AuthData {
   user: User | null;
   dispatch: Dispatch<Action>;
-};
+}
 
 interface State {
   user: User | null;
@@ -40,7 +40,7 @@ export const authReducer = (state: State, action: Action) => {
 export const useAuthContext = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw Error("UseAuthContext must be used within AuthContextProvider");
+    throw Error("useAuthContext must be used within AuthContextProvider");
   }
   return context;
 };
@@ -55,6 +55,7 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
       try {
         const user = await AsyncStorage.getItem("user");
         if (user) {
+          // console.log("Loaded user from storage:", user);
           dispatch({ type: "LOGIN", payload: JSON.parse(user) });
         }
       } catch (e) {
@@ -63,6 +64,20 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
     };
     loadUser();
   }, []);
+
+  useEffect(() => {
+    const saveUser = async () => {
+      try {
+        await AsyncStorage.setItem("user", JSON.stringify(state.user));
+        // console.log("Saved user to storage:", state.user);
+      } catch (e) {
+        console.log("Failed to save user token");
+      }
+    };
+    if (state.user) {
+      saveUser();
+    }
+  }, [state.user]);
 
   console.log("authContext state: ", state);
 

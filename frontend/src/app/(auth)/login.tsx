@@ -6,6 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
@@ -78,52 +80,62 @@ const login = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
-        <FontAwesome
-          name="long-arrow-left"
-          style={styles.back}
-          onPress={router.back}
-        />
-        <View style={styles.container}>
-          <Image source={loginVector} style={styles.vector} />
-          <Text style={styles.title}>Login</Text>
-          <Text style={styles.label}>Email</Text>
-          <TextInput
-            value={email}
-            onChangeText={(text) => setEmail(text.toLowerCase())}
-            placeholder="jon@gmail.com"
-            style={styles.inputContainer}
-          />
-
-          <Text style={styles.label}>Password</Text>
-
-          <View style={styles.inputContainer}>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              style={{ flex: 1 }}
-              secureTextEntry={secureTextEntry}
+      <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        >
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <FontAwesome
+              name="long-arrow-left"
+              style={styles.back}
+              onPress={router.back}
             />
-            <TouchableOpacity
-              onPress={() => setSecureTextEntry(!secureTextEntry)}
-            >
-              <Text style={styles.showText}>
-                {secureTextEntry ? "Show" : "Hide"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+            <View style={styles.container}>
+              <Image source={loginVector} style={styles.vector} />
+              <Text style={styles.title}>Login</Text>
+              <Text style={styles.label}>Email</Text>
+              <TextInput
+                value={email}
+                onChangeText={(text) => setEmail(text.toLowerCase())}
+                placeholder="jon@gmail.com"
+                style={styles.inputContainer}
+              />
 
-          <TouchableOpacity onPress={handlePress}>
-          <Text style={styles.changePassword} >Forget your password?</Text>
-          </TouchableOpacity>
-          
-          <Button text="Log In" onPress={handleLogin} />
-          {error != "noError" && (
-            <Text style={[styles.label, { color: "red", alignSelf: "center" }]}>
-              {error}
-            </Text>
-          )}
-        </View>
+              <Text style={styles.label}>Password</Text>
+
+              <View style={styles.inputContainer}>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  style={{ flex: 1 }}
+                  secureTextEntry={secureTextEntry}
+                />
+                <TouchableOpacity
+                  onPress={() => setSecureTextEntry(!secureTextEntry)}
+                >
+                  <Text style={styles.showText}>
+                    {secureTextEntry ? "Show" : "Hide"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity onPress={handlePress}>
+                <Text style={styles.changePassword}>Forget your password?</Text>
+              </TouchableOpacity>
+
+              <Button text="Log In" onPress={handleLogin} />
+              {error != "noError" && (
+                <Text
+                  style={[styles.label, { color: "red", alignSelf: "center" }]}
+                >
+                  {error}
+                </Text>
+              )}
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </SafeAreaProvider>
   );

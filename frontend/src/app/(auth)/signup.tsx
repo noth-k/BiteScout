@@ -1,67 +1,71 @@
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import colors from "@assets/colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import Button from "@/components/Button";
-import { signUpApi } from "../api/api";
-import { User } from "@/types";
+import { LoginUser } from "@/types";
+import { loginApi } from "../api/api";
 import { useAuthContext } from "@/providers/AuthProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
+// import { ScrollView } from "react-native-reanimated/lib/typescript/Animated";
 
-const signup = () => {
+const loginVector = require("@assets/images/LoginVector.png");
+
+const login = () => {
   const router = useRouter();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [preferences, setPreferences] = useState("");
-  const [restrictions, setRestrictions] = useState("");
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [error, setError] = useState("noError");
   const { user, dispatch } = useAuthContext();
 
   useEffect(() => {
     if (user != null) {
-      router.push("/(tabs)/");
+      router.push("/(tabs)/home/");
     }
   }, [user]);
 
-  const handleSignUp = async () => {
-    const user: User = {
+  const handlePress = () => {
+    setError("Feature not available yet");
+
+    // Set a timeout to clear the error message after 5 seconds
+    const timer = setTimeout(() => {
+      setError("");
+    }, 3000);
+
+    // Clear the timeout if the component unmounts to avoid memory leaks
+    return () => clearTimeout(timer);
+  };
+
+  const handleLogin = async () => {
+    const loginUser: LoginUser = {
       email,
       password,
-      name,
-      preferences,
-      restrictions,
     };
-
     const resetFields = () => {
-      setName("");
       setEmail("");
       setPassword("");
-      setPreferences("");
-      setRestrictions("");
-      setSecureTextEntry(true);
-      setError("noError");
     };
 
-    const json: any = await signUpApi(user);
+    const json: any = await loginApi(loginUser);
     const errorMsg = json?.error;
-    setError(errorMsg);
     console.log(json);
-
+    setError(errorMsg);
     if (json?.token) {
+      router.push("../(tabs)/home/");
       resetFields();
       //set session data
-      router.push("/(tabs)/home/");
       console.log(json.user);
       dispatch({ type: "LOGIN", payload: json.user });
       try {
@@ -81,14 +85,8 @@ const signup = () => {
           onPress={router.back}
         />
         <View style={styles.container}>
-          <Text style={styles.title}>Lets get you started</Text>
-          <Text style={styles.label}>Name</Text>
-          <TextInput
-            value={name}
-            onChangeText={setName}
-            placeholder="Jon"
-            style={styles.inputContainer}
-          />
+          <Image source={loginVector} style={styles.vector} />
+          <Text style={styles.title}>Login</Text>
           <Text style={styles.label}>Email</Text>
           <TextInput
             value={email}
@@ -96,7 +94,9 @@ const signup = () => {
             placeholder="jon@gmail.com"
             style={styles.inputContainer}
           />
+
           <Text style={styles.label}>Password</Text>
+
           <View style={styles.inputContainer}>
             <TextInput
               value={password}
@@ -112,32 +112,14 @@ const signup = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.label}>Preferences</Text>
-          <TextInput
-            value={preferences}
-            onChangeText={setPreferences}
-            placeholder="Japanese, Thai"
-            style={styles.inputContainer}
-          />
-          <Text style={styles.label}>Dietary Restrictions</Text>
-          <TextInput
-            value={restrictions}
-            onChangeText={setRestrictions}
-            placeholder="Halal"
-            style={styles.inputContainer}
-          />
-          <Button
-            text="Sign Up"
-            buttonStyle={{ marginTop: 40, marginBottom: 80 }}
-            onPress={handleSignUp}
-          />
+
+          <TouchableOpacity onPress={handlePress}>
+            <Text style={styles.changePassword}>Forget your password?</Text>
+          </TouchableOpacity>
+
+          <Button text="Log In" onPress={handleLogin} />
           {error != "noError" && (
-            <Text
-              style={[
-                styles.label,
-                { color: "red", marginTop: 10, alignSelf: "center" },
-              ]}
-            >
+            <Text style={[styles.label, { color: "red", alignSelf: "center" }]}>
               {error}
             </Text>
           )}
@@ -147,23 +129,27 @@ const signup = () => {
   );
 };
 
-export default signup;
+export default login;
 
 const styles = StyleSheet.create({
   back: {
     marginLeft: 20,
     fontSize: 30,
-    color: colors.primary800,
   },
   container: {
-    padding: "10%",
+    alignSelf: "center",
+    width: "80%",
+  },
+  vector: {
+    height: 340,
+    width: 220,
+    alignSelf: "center",
   },
   title: {
     fontFamily: "Inter",
     fontSize: 40,
     fontWeight: "bold",
     color: colors.primary800,
-    marginBottom: 20,
   },
   label: {
     fontFamily: "Inter",
@@ -171,6 +157,14 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     marginTop: 20,
     marginBottom: 5,
+  },
+  changePassword: {
+    textAlign: "right",
+    fontFamily: "Inter",
+    fontWeight: "300",
+    color: colors.primary800,
+    marginBottom: 15,
+    marginTop: 5,
   },
   inputContainer: {
     flexDirection: "row",
@@ -181,13 +175,8 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "white",
   },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
   showText: {
-    color: "blue",
+    color: colors.primary800,
     marginLeft: 10,
     fontFamily: "Inter",
     fontWeight: "300",
