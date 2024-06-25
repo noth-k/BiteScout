@@ -43,6 +43,7 @@ const RoomScreen = () => {
         currSubmittedUsers.push(user?._id || "");
     }
 
+
     const handleWaitlist = () => {
         router.push({
             pathname: '/rooms/waitlist',
@@ -74,6 +75,8 @@ const RoomScreen = () => {
         fetchAllUsers();
 
     }, [])
+
+
 
    
 

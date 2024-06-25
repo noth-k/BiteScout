@@ -36,7 +36,6 @@ const settings = () => {
         <Text style={styles.label}>Leave Group</Text>
         <Text style={styles.label}>Delete Group</Text>
       </ScrollView>
-      
     </View>
   )
 }
