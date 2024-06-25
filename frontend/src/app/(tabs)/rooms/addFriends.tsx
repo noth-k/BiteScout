@@ -22,9 +22,9 @@ const addFriendsScreen = () => {
     const route = useRoute();
     const { previousScreen, currUsers, roomId} = route.params as { previousScreen: string, currUsers:string[], roomId: string };
     const { selectedUsersState, dispatch } = useSelectedUsersContext();
-    console.log(previousScreen);
-    console.log(currUsers); //all in a string
-    console.log(roomId);
+    // console.log(previousScreen);
+    // console.log(currUsers); //all in a string
+    // console.log(roomId);
     
     
 

@@ -14,14 +14,11 @@ const RoomScreen = () => {
     const { user } = useAuthContext();
     const router = useRouter();
     const [roomData, setRoomData] = useState<Room | null>(null);
-    const [allUsers, setAllUsers] = useState([]);
+    const [users, setUsers] = useState<User[] | null> (null);
     const [submitted, setSubmitted] = useState(false);
     const currSubmittedUsers = roomData?.submittedUsers || [];
-    const waitingList = roomData?.users.filter(user => !currSubmittedUsers.includes(user || "")) || [];
-    const waitingListUsers = allUsers.filter((user: User) => waitingList.includes(user._id || ""));
-    const roomUsers = allUsers.filter((user: User) => roomData?.users.includes(user._id));
-    
-    
+    const currUsers = users?.filter((user:User) => roomData?.users.includes(user._id))
+    const waitingUsers = currUsers?.filter((user: User) => !currSubmittedUsers.includes(user._id || ""))
 
     const handleAddFriends = () => {
         //current users in an array
@@ -46,12 +43,20 @@ const RoomScreen = () => {
         currSubmittedUsers.push(user?._id || "");
     }
 
+
+    const handleWaitlist = () => {
+        router.push({
+            pathname: '/rooms/waitlist',
+            params: { waitingList: JSON.stringify(waitingUsers) }}
+        )
+    }
+
     const handleSettings = () => {
         router.push({
-            pathname: '/rooms/settings',
+            pathname:'./settings',
             params: {
                 roomId: roomData?._id,
-                roomUsers: JSON.stringify(roomUsers),
+                currUsers: JSON.stringify(currUsers),
             }
         })
     }
@@ -62,14 +67,12 @@ const RoomScreen = () => {
             const json: any = await fetchRoomApi(id);
             setRoomData(json.room);
         }
-        getRoom();
-
-        const getUsers = async () => {
-            const users:any = await fetchAllUsersApi();
-            setAllUsers(users);
+        const fetchAllUsers = async () => {
+            const json: any = await fetchAllUsersApi();
+            setUsers(json);
         }
-        getUsers();
-        
+        getRoom();
+        fetchAllUsers();
 
     }, [])
 
@@ -83,7 +86,7 @@ const RoomScreen = () => {
         <View style={styles.header}>
             <View style={styles.title}>
                 <FontAwesome
-                    name="long-arrow-left"
+                    name="angle-left"
                     style={styles.back}
                     onPress={() => router.back()}
                 />
@@ -98,7 +101,7 @@ const RoomScreen = () => {
         <View style={styles.roomDetails}>
             <CircularProgress userCount={roomData?.users.length || 0} submitCount={roomData?.submittedUsers.length || 0} style={{marginLeft:30}}/>
             <View>
-                <Text style={styles.waitLabel} onPress={() => {router.push({pathname: '/rooms/waitlist', params: { waitingListUsers: JSON.stringify(waitingListUsers) }})}}>Waiting on...</Text>
+                <Text style={styles.waitLabel} onPress={handleWaitlist}>Waiting on...</Text>
                 <TouchableOpacity style={styles.submit} disabled={submitted} onPress={handleSubmit}>
                     <Text style={styles.submitText}>Select Vibe</Text>
                 </TouchableOpacity>
@@ -120,7 +123,7 @@ export default RoomScreen;
 const styles = StyleSheet.create({
     header: {
         backgroundColor:colors.primary400,
-        height:'55%',
+        height:'50%',
         borderRadius:15,
         shadowColor:'black',
         shadowOffset:{
@@ -141,7 +144,7 @@ const styles = StyleSheet.create({
         padding:20,
     },
     settings: {
-        fontSize:20,
+        fontSize:25,
         color:'white',
         marginTop:'auto',
         padding:20,

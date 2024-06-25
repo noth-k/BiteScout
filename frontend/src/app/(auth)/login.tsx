@@ -88,7 +88,7 @@ const login = () => {
         >
           <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <FontAwesome
-              name="long-arrow-left"
+              name="angle-left"
               style={styles.back}
               onPress={router.back}
             />

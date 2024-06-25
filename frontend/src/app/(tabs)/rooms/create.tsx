@@ -78,7 +78,7 @@ const createRoom = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <FontAwesome
-            name="long-arrow-left"
+            name="angle-left"
             style={styles.back}
             onPress={handleBack}
         />
@@ -100,7 +100,7 @@ const createRoom = () => {
         ))}
         {selectedUsersState.length == 0 && <View style={{width: '100%', height: '10%'}}></View>}
         <TouchableOpacity style={{padding:10, backgroundColor:colors.primary400, width: '30%', alignSelf:'center', borderRadius:10, marginVertical:10}} onPress={handleSubmit} >
-            <Text style={{fontFamily:'Inter', fontSize: 15, color:'white', textAlign:'center'}}>Create</Text>
+            <Text style={styles.create}>Create</Text>
         </TouchableOpacity>
         
       </ScrollView>
@@ -172,6 +172,19 @@ const styles = StyleSheet.create({
     icons: {
         fontSize:15,
         color:'lightgrey',
+    },
+    create: {
+        fontFamily:'Inter',
+        fontSize: 15,
+        color:'white',
+        textAlign:'center',
+        shadowColor: 'black',
+        shadowOffset: {
+            width: -2,
+            height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
     }
 
 })

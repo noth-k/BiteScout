@@ -40,7 +40,7 @@ export default function TabTwoScreen() {
         <TouchableOpacity style={styles.create} onPress={() => router.push('/rooms/create/')}>
           <FontAwesome
           name="plus"
-          style={{ fontSize:16, color:'white'}}
+          style={{ fontSize:18, color:'white', marginTop:20}}
         />
         </TouchableOpacity>
       </View>

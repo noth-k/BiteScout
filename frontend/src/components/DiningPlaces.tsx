@@ -10,6 +10,7 @@ import * as Location from "expo-location";
 import axios from "axios";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/providers/AuthProvider"; // Import the authentication context
+import colors from "@assets/colors";
 
 interface Place {
   place_id: string;
@@ -232,14 +233,13 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.recommendations}>Dining Places</Text>
       <TouchableOpacity
         style={styles.recommendButton}
         onPress={fetchRecommendations}
       >
-        <Text style={styles.recommendButtonText}>Recommend Now!!!</Text>
+        { !loading && <Text style={styles.recommendButtonText}>Recommend</Text>}
+        {loading && <ActivityIndicator size="small" color="#0000ff" />}
       </TouchableOpacity>
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
     </View>
   );
 };
@@ -258,16 +258,26 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   recommendButton: {
-    backgroundColor: "#001f3f",
+    backgroundColor: colors.primary400,
     padding: 15,
     margin: 5,
     alignItems: "center",
-    borderRadius: 5,
+    borderRadius: 10,
     width: "90%",
+    marginTop:'10%',
+    shadowColor: 'black',
+    shadowOffset: {
+        width: -2,
+        height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
   },
   recommendButtonText: {
     color: "#fff",
     fontSize: 18,
+    fontFamily:'Inter',
+    fontWeight:'400',
   },
 });
 
