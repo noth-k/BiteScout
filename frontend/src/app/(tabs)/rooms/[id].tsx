@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, Alert, Touchable, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { fetchRoomApi } from '@/app/api/api';
-import { Room } from '@/types';
+import { fetchAllUsersApi, fetchRoomApi } from '@/app/api/api';
+import { Room, User } from '@/types';
 import colors from '@assets/colors';
 import { FontAwesome } from '@expo/vector-icons';
 import MemberAddIconComponent from '@/components/MemberAddIconComponent';
@@ -14,11 +14,11 @@ const RoomScreen = () => {
     const { user } = useAuthContext();
     const router = useRouter();
     const [roomData, setRoomData] = useState<Room | null>(null);
+    const [users, setUsers] = useState<User[] | null> (null);
     const [submitted, setSubmitted] = useState(false);
     const currSubmittedUsers = roomData?.submittedUsers || [];
-    const waitingList = roomData?.users.filter(user => !currSubmittedUsers.includes(user || ""));
-    
-    
+    const currUsers = users?.filter((user:User) => roomData?.users.includes(user._id))
+    const waitingUsers = currUsers?.filter((user: User) => !currSubmittedUsers.includes(user._id || ""))
 
     const handleAddFriends = () => {
         //current users in an array
@@ -42,6 +42,23 @@ const RoomScreen = () => {
         setSubmitted(true);
         currSubmittedUsers.push(user?._id || "");
     }
+
+    const handleWaitlist = () => {
+        router.push({
+            pathname: '/rooms/waitlist',
+            params: { waitingList: JSON.stringify(waitingUsers) }}
+        )
+    }
+
+    const handleSettings = () => {
+        router.push({
+            pathname:'./settings',
+            params: {
+                roomId: roomData?._id,
+                currUsers: JSON.stringify(currUsers),
+            }
+        })
+    }
     
     //fetching room details
     useEffect(() => {
@@ -49,8 +66,12 @@ const RoomScreen = () => {
             const json: any = await fetchRoomApi(id);
             setRoomData(json.room);
         }
+        const fetchAllUsers = async () => {
+            const json: any = await fetchAllUsersApi();
+            setUsers(json);
+        }
         getRoom();
-        
+        fetchAllUsers();
 
     }, [])
 
@@ -62,21 +83,22 @@ const RoomScreen = () => {
         <View style={styles.header}>
             <View style={styles.title}>
                 <FontAwesome
-                    name="long-arrow-left"
+                    name="angle-left"
                     style={styles.back}
                     onPress={() => router.back()}
                 />
                 <Text style={styles.roomName}>{roomData?.name}</Text>
                 <FontAwesome 
-                    name= "ellipsis-h"
-                    style={styles.menu}
+                    name= "cog"
+                    style={styles.settings}
+                    onPress={handleSettings}
                     />
             </View>
             <MemberAddIconComponent onPress={handleAddFriends} iconStyle={styles.icons}/>
         <View style={styles.roomDetails}>
             <CircularProgress userCount={roomData?.users.length || 0} submitCount={roomData?.submittedUsers.length || 0} style={{marginLeft:30}}/>
             <View>
-                <Text style={styles.waitLabel} onPress={() => {router.push({pathname: '/rooms/waitlist', params: { waitingList: JSON.stringify(waitingList) }})}}>Waiting on...</Text>
+                <Text style={styles.waitLabel} onPress={handleWaitlist}>Waiting on...</Text>
                 <TouchableOpacity style={styles.submit} disabled={submitted} onPress={handleSubmit}>
                     <Text style={styles.submitText}>Select Vibe</Text>
                 </TouchableOpacity>
@@ -98,7 +120,7 @@ export default RoomScreen;
 const styles = StyleSheet.create({
     header: {
         backgroundColor:colors.primary400,
-        height:'55%',
+        height:'50%',
         borderRadius:15,
         shadowColor:'black',
         shadowOffset:{
@@ -118,8 +140,8 @@ const styles = StyleSheet.create({
         marginTop:'auto',
         padding:20,
     },
-    menu: {
-        fontSize:20,
+    settings: {
+        fontSize:25,
         color:'white',
         marginTop:'auto',
         padding:20,

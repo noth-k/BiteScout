@@ -1,7 +1,9 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import React, { useState } from 'react';
+import { View, Text, StyleSheet, Image, FlatList } from 'react-native';
+import Slider from '@react-native-community/slider';
 import colors from '@assets/colors';
 import VibeContainer from '@/components/VibeContainer';
+import DiningPlaces from '@/components/DiningPlaces';
 
 const displayVector = require("@assets/images/displayImage.png");
 
@@ -20,8 +22,22 @@ const vibes: Vibe[] = [
   { name: "Convenient" },
 ];
 
+const priceRanges = [
+  "Less than $10",
+  "Less than $20",
+  "Less than $50",
+  "Any Price"
+];
+
 const Index = () => {
   const [selectedVibe, setSelectedVibe] = useState<String>('');
+  const [priceRangeIndex, setPriceRangeIndex] = useState<number>(0);
+
+  const handlePriceChange = (value: number) => {
+    // Snap to the closest point
+    const closestPoint = Math.round(value);
+    setPriceRangeIndex(closestPoint);
+  };
 
   return (
     <View>
@@ -45,7 +61,20 @@ const Index = () => {
           }}
         />
         <Text style={styles.label}>SELECT PRICE RANGE</Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={3}
+          step={1}
+          value={priceRangeIndex}
+          onValueChange={handlePriceChange}
+          minimumTrackTintColor={colors.primary400}
+          maximumTrackTintColor="gray"
+          thumbTintColor={colors.primary400}
+        />
+        <Text style={styles.priceLabel}>{`${priceRanges[priceRangeIndex]}`}</Text>
       </View>
+      <DiningPlaces selectedPrice={priceRanges[priceRangeIndex]} />
     </View>
   );
 };
@@ -55,7 +84,7 @@ export default Index;
 const styles = StyleSheet.create({
   display: {
     width: '100%',
-    height: '60%',
+    height: '50%',
     backgroundColor: colors.primary400,
     borderRadius: 10,
     shadowColor: 'black',
@@ -79,5 +108,16 @@ const styles = StyleSheet.create({
     color: 'grey',
     marginTop: 30,
     marginBottom:10,
+  },
+  slider: {
+    width: '100%',
+    height: 40,
+  },
+  priceLabel: {
+    textAlign: 'center',
+    marginTop: 10,
+    fontFamily: 'Inter',
+    fontWeight: '400',
+    color: 'grey',
   }
 });

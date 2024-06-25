@@ -79,6 +79,11 @@ const signup = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView>
+        <FontAwesome
+          name="angle-left"
+          style={styles.back}
+          onPress={router.back}
+        />
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={styles.title}>Sign Up</Text>
           <Text style={styles.label}>Name</Text>
@@ -97,22 +102,21 @@ const signup = () => {
             keyboardType="email-address"
           />
           <Text style={styles.label}>Password</Text>
-          <View style={styles.row}>
-            <TextInput
-              value={password}
-              onChangeText={setPassword}
-              placeholder="******"
-              style={[styles.inputContainer, { flex: 1 }]}
-              secureTextEntry={secureTextEntry}
-            />
-            <TouchableOpacity
-              onPress={() => setSecureTextEntry(!secureTextEntry)}
-            >
-              <Text style={styles.showText}>
-                {secureTextEntry ? "Show" : "Hide"}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <View style={styles.inputContainer}>
+                <TextInput
+                  value={password}
+                  onChangeText={setPassword}
+                  style={{ flex: 1 }}
+                  secureTextEntry={secureTextEntry}
+                />
+                <TouchableOpacity
+                  onPress={() => setSecureTextEntry(!secureTextEntry)}
+                >
+                  <Text style={styles.showText}>
+                    {secureTextEntry ? "Show" : "Hide"}
+                  </Text>
+                </TouchableOpacity>
+              </View>
           <Text style={styles.label}>Preferences</Text>
           <TextInput
             value={preferences}
