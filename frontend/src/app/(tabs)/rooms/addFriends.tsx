@@ -9,12 +9,14 @@ import { User } from '@/types';
 import { useRouter } from 'expo-router';
 import { useSelectedUsersContext } from '@/providers/SelectedUsersProvider';
 import { useRoute } from '@react-navigation/native';
+import { useAuthContext } from '@/providers/AuthProvider';
 
 
 
 const addFriendsScreen = () => {
     
     const [search, setSearch] = useState('');
+    const { user:authUser } = useAuthContext();
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
@@ -30,7 +32,8 @@ const addFriendsScreen = () => {
         const fetchUsers = async () => {
             try {
                 const initialUsers = await searchUserApi('') as never[];
-                setUsers(initialUsers);
+                console.log("users: ", initialUsers);
+                setUsers(initialUsers.filter((user:User) => user._id != authUser?._id));
             } catch (error) {
                 console.error('Error fetching initial users:', error);
             }

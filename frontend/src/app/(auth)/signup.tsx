@@ -65,7 +65,7 @@ const signup = () => {
 
     if (json?.token) {
       resetFields();
-      router.push("/(tabs)/home/");
+      router.push("../(tabs)/home/");
       console.log(json.user);
       dispatch({ type: "LOGIN", payload: json.user });
       try {
@@ -96,7 +96,7 @@ const signup = () => {
           <Text style={styles.label}>Email</Text>
           <TextInput
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(text) => setEmail(text.toLowerCase())}
             placeholder="example@example.com"
             style={styles.inputContainer}
             keyboardType="email-address"
