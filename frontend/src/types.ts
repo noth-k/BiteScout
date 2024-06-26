@@ -20,10 +20,6 @@ export interface Room {
     restrictions:string[],
     submittedUsers: string[],
     pastRecommendation: string[],
-    
-<<<<<<< HEAD
+    vibes: string[],
+    price: string[]
 }
-=======
-    _id?:string,
-}
->>>>>>> reco

@@ -22,9 +22,7 @@ const addFriendsScreen = () => {
     const route = useRoute();
     const { previousScreen, currUsers, roomId} = route.params as { previousScreen: string, currUsers:string[], roomId: string };
     const { selectedUsersState, dispatch } = useSelectedUsersContext();
-    // console.log(previousScreen);
-    // console.log(currUsers); //all in a string
-    // console.log(roomId);
+    
     
     
 
@@ -82,7 +80,6 @@ const addFriendsScreen = () => {
 
     //from create
     const handleSubmitUsers = () => {
-        console.log("current: ", selectedUsers);
         router.back();
         //need to make sure the incoming selectedusers is not in the context
         let currSelectedUsers = selectedUsers;

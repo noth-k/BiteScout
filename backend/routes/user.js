@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth  } = require('../controllers/userController');
+const { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth, removeRoomFromUser  } = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -28,5 +28,8 @@ router.post('/data', fetchUserData);
 
 //fetch all users
 router.post('/allData', fetchUsers )
+
+//remove room from user
+router.post('/removeRoom', removeRoomFromUser);
 
 module.exports = router;

@@ -15,14 +15,22 @@ const roomSchema = new Schema({
     restrictions:[{
         type:String,
     }],
-    submittedUsers:[{
+    submittedUsers:{
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        required:true,
+    },
+    vibes:[{
+        type:String
+    }],
+    price: [{
         type:String
     }]
 
 })
 
 roomSchema.statics.createRoom = async function (name, users, restrictions) {
-    const room = new this({name, users, restrictions, submittedUsers:[]});
+    const room = new this({name, users, restrictions, submittedUsers:[], vibes:[], price:[]});
         await room.save();
         return room;
 }

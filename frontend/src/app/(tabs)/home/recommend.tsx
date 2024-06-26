@@ -14,7 +14,7 @@ const recommend = () => {
             {/* header */}
             <View style={styles.header}>
             <FontAwesome
-                name="long-arrow-left"
+                name="angle-left"
                 style={styles.back}
                 onPress={() => router.back()}
             />

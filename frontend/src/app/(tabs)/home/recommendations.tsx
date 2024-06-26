@@ -18,7 +18,7 @@ const Recommendations: React.FC = () => {
   return (
     <View style={styles.container}>
       <FontAwesome
-        name="long-arrow-left"
+        name="angle-left"
         style={styles.back}
         onPress={() => router.back()}
       />
