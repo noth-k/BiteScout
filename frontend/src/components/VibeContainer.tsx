@@ -54,11 +54,6 @@ const styles = StyleSheet.create({
         borderColor: 'lightgrey',
     },
     label: {
-<<<<<<< roomBackend
-        color:colors.primary400,
-        textAlign:'center',
-        padding:13,
-=======
         fontSize: 16,
         textAlign: 'center',
         fontFamily:'Inter',
@@ -69,6 +64,5 @@ const styles = StyleSheet.create({
     },
     unselectedLabel: {
         color: "black",
->>>>>>> main
     }
 });
