@@ -19,6 +19,7 @@ const createRoom = () => {
     const [roomName, setRoomName] = useState('');
     const { user, dispatch: authDispatch } = useAuthContext();
     const { selectedUsersState, dispatch } = useSelectedUsersContext();
+    const [error, setError] = useState<string | null>(null);
     
     const usersId = selectedUsersState.map(user => user._id);
     usersId.push(user?._id);
@@ -31,9 +32,11 @@ const createRoom = () => {
         const room: Room = {
             name: roomName,
             users: usersId,
-            restrictions:usersRestrictions,
-            submittedUsers:[],
-            pastRecommendation:[],
+            restrictions: usersRestrictions,
+            submittedUsers: [],
+            pastRecommendation: [],
+            vibes: [],
+            price: []
         }
         //create room instance with members userIds inside with the name
         const json: any = await createRoomApi(room);
@@ -102,6 +105,8 @@ const createRoom = () => {
         <TouchableOpacity style={{padding:10, backgroundColor:colors.primary400, width: '30%', alignSelf:'center', borderRadius:10, marginVertical:10}} onPress={handleSubmit} >
             <Text style={styles.create}>Create</Text>
         </TouchableOpacity>
+
+        {error && <Text>{error}</Text>}
         
       </ScrollView>
     </View>

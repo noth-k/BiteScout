@@ -49,3 +49,23 @@ export const updateRoomApi = (id:string, newUsers: string[]) => {
     return api('room/update', {method:ApiType.POST, body:{ id, newUsers}})
 }
 
+export const removeUserApi = (roomId:string, userId: string) => {
+    return api('room/removeUser', {method:ApiType.POST, body: {roomId, userId}});
+}
+
+export const removeRoomFromUserApi = (roomId:string, userId: string) => {
+    return api('user/removeRoom', {method:ApiType.POST, body: {roomId, userId}});
+}
+
+export const updateSubmittedUsersApi = (roomId: string, userId: string, vibe:string, price:string) => {
+    return api('room/submitUser', {method:ApiType.POST, body: {roomId, userId, vibe, price}});
+}
+
+export const resetSubmittedUsersApi = (roomId:string) => {
+    return api('room/reset', {method:ApiType.POST, body: {roomId}});
+}
+
+export const deleteRoomApi = (roomId:string) => {
+    return api('room/delete', {method:ApiType.POST, body: {roomId}});
+}
+

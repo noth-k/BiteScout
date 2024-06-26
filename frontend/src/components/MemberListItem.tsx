@@ -7,7 +7,7 @@ type MemberListItemProps = {
     user?: User | null,
     selected?: boolean,
     deletable?: boolean,
-    deletableFunc?: () => void,
+    deletableFunc?: () => void
 }
 
 const MemberListItem = ({ user, selected, deletable, deletableFunc }: MemberListItemProps) => {
@@ -18,6 +18,11 @@ const MemberListItem = ({ user, selected, deletable, deletableFunc }: MemberList
         <Text style={styles.label}>{user?.name}</Text>
         <Text style={styles.label}>{user?.email}</Text>
       </View>
+      { deletable && <FontAwesome5
+      name="times"
+      onPress={deletableFunc}
+      style={styles.cross}
+      />}
     </View>
   )
 }
@@ -48,5 +53,10 @@ const styles = StyleSheet.create({
         fontWeight:'400',
         marginLeft: 20,
         fontSize:14,
+    },
+    cross: {
+      fontSize:20,
+      color: 'lightgrey',
+      marginRight:10,
     }
 })

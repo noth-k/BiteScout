@@ -108,6 +108,27 @@ const updateRooms = async (req, res) => {
     }
 }
 
+const removeRoomFromUser = async (req, res) => {
+    const { userId, roomId } = req.body;
+  
+    try {
+      // Update the user by pulling the roomId from the rooms array
+      const user = await User.updateOne(
+        { _id: userId },
+        {
+          $pull: {
+            rooms: roomId,
+          },
+        }
+      );
+      // Send a success response
+      res.status(200).json({ message: 'Room removed from user successfully' });
+    } catch (error) {
+      // Handle any errors
+      res.status(400).json({ error: error.message });
+    }
+  };
+
 const fetchUserData = async (req, res) => {
     const { userId } = req.body;
 
@@ -128,4 +149,4 @@ const fetchUsers = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth };
+module.exports = { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth, removeRoomFromUser };

@@ -11,6 +11,7 @@ export default function RoomLayout() {
         <Stack.Screen name='waitlist' options={{presentation: 'modal', headerTitle:'Waiting on...'}} />
         <Stack.Screen name='[id]' options={{headerShown:false}} />
         <Stack.Screen name='settings' options={{headerShown: false}} />
+        <Stack.Screen name='selection' options={{headerShown: false}} />
     </Stack>
   )
 }
