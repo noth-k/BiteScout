@@ -30,7 +30,7 @@ const fetchRoomNames = async (req, res) => {
 }
 
 const updateRoom = async (req, res) => {
-    const { id, newUsers } = req.body;
+    const { id, newUsers, newRestrictions } = req.body;
     try {
         // Fetch the room to get the current users array
         const room = await Room.findById(id);
@@ -40,6 +40,7 @@ const updateRoom = async (req, res) => {
 
         // Update the users array
         room.users = [...room.users, ...newUsers];
+        room.restrictions = [...room.restrictions, ...newRestrictions];
 
         // Save the updated room
         await room.save();
@@ -156,4 +157,17 @@ const removeUser = async (req, res) => {
       res.status(500).json({ message: 'Internal server error', error });
     }
   };
-module.exports = { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice};
+
+  const fetchRestrictions = async (req, res) => {
+    const { roomId } = req.body;
+    try {
+      const room = await Room.findById(roomId).select('restrictions');
+      if (!room) {
+        return res.status(404).json({ error: 'Room not found' });
+    }
+    res.status(200).json({ restrictions: room.restrictions });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+module.exports = { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice, fetchRestrictions};

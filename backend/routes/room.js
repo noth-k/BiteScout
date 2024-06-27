@@ -1,5 +1,5 @@
 const express = require('express');
-const { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice } = require('../controllers/roomController');
+const { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice, fetchRestrictions } = require('../controllers/roomController');
 
 const router = express.Router();
 
@@ -20,6 +20,8 @@ router.post('/submitUser', updateSubmittedUsers);
 router.post('/reset', resetSubmittedUsers);
 
 router.post('/vibesAndPrice', fetchVibesAndPrice),
+
+router.post('/restrictions', fetchRestrictions)
 
 
 module.exports = router;
