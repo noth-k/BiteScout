@@ -70,11 +70,11 @@ const login = () => {
       //set session data
       console.log(json.user);
       dispatch({ type: "LOGIN", payload: json.user });
-      try {
-        await AsyncStorage.setItem("user", JSON.stringify(json.user));
-      } catch (e) {
-        console.log("Failed to save user token");
-      }
+      // try {
+      //   await AsyncStorage.setItem("user", JSON.stringify(json.user));
+      // } catch (e) {
+      //   console.log("Failed to save user token");
+      // }
     }
   };
 

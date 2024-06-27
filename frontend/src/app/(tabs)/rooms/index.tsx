@@ -20,7 +20,7 @@ export default function TabTwoScreen() {
   const { user } = useAuthContext();
   const roomIds = user?.rooms || ["test"];
   const [names, setNames] = useState<Room[]>([]);
-  let displayedNames;
+  const displayedNames = names.filter((item) => roomIds.includes(item._id || "error"));
 
   //use Effect hook to make sure all the rooms are displayed are same to the ones in the context
   useEffect(() => {
@@ -32,11 +32,15 @@ export default function TabTwoScreen() {
     getRoomNames();
   }, [roomIds]);
 
+
   //filter using the ids that are in roomsId
   displayedNames = names.filter((item) =>
     roomIds.includes(item._id || "error")
   );
   // console.log(displayedNames);
+
+  }, [roomIds])
+
 
   return (
     <View style={styles.container}>

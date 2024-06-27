@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, Button as RNButton } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "expo-router";
 import Button from "@/components/Button";
@@ -8,6 +8,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome } from "@expo/vector-icons";
 import { User } from "@/types";
 import { updateApi } from "@/app/api/api";
+import { Picker } from "@react-native-picker/picker";
 
 const profile = () => {
   const router = useRouter();
@@ -15,6 +16,7 @@ const profile = () => {
   const [ name, setName ] = useState(user?.name || '');
   const [ preferences, setPreferences ] = useState(user?.preferences || '');
   const [ restrictions, setRestrictions ] = useState(user?.restrictions || '')
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [error, setError] = useState('');
   
   const newUser:User = {
@@ -50,7 +52,7 @@ const profile = () => {
       <SafeAreaView style={{backgroundColor:'white'}}>
       <View style={styles.container}>
       <FontAwesome
-        name="long-arrow-left"
+        name="angle-left"
         style={styles.back}
         onPress={() => router.back()}
       />
@@ -85,15 +87,42 @@ const profile = () => {
             />
         </View>
 
+        <Text style={[styles.label, {marginBottom:0, marginTop:10}]}>Dietary Restrictions</Text>
         <View style={styles.labelContainer}>
-          <Text style={styles.label}>Restrictions:</Text>
-          <TextInput 
-            value={restrictions}
-            onChangeText={(text) => setRestrictions(text)}
-            placeholder={user?.restrictions}
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
             style={styles.inputContainer}
-            />
-        </View>
+          >
+            <Text>{restrictions}</Text>
+          </TouchableOpacity>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => setModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>
+                  Select Dietary Restriction
+                </Text>
+                <Picker
+                  selectedValue={restrictions}
+                  onValueChange={(itemValue: string) =>
+                    setRestrictions(itemValue)
+                  }
+                  style={styles.picker}
+                >
+                  <Picker.Item label="Halal" value="Halal" />
+                  <Picker.Item label="Vegetarian" value="Vegetarian" />
+                  <Picker.Item label="Vegan" value="Vegan" />
+                  <Picker.Item label="Nil" value="Nil" />
+                </Picker>
+                <RNButton title="Done" onPress={() => setModalVisible(false)} />
+              </View>
+            </View>
+          </Modal>
+          </View>
 
         <Button onPress={handleSubmit} text='Update'/>
     
@@ -145,5 +174,25 @@ const styles = StyleSheet.create({
     padding: 12,
     width: "100%",
     backgroundColor: "white",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 20,
+    marginBottom: 10,
+  },
+  picker: {
+    width: "100%", // need to add this otherwise picker might not be visible idk also
   },
 })

@@ -21,5 +21,5 @@ export interface Room {
     submittedUsers: string[],
     pastRecommendation: string[],
     vibes: string[],
-    price: string[]
+    price: string[],
 }
