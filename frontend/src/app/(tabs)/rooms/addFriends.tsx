@@ -15,6 +15,7 @@ import { useAuthContext } from '@/providers/AuthProvider';
 
 const addFriendsScreen = () => {
     
+    const { user:authUser } = useAuthContext();
     const [search, setSearch] = useState('');
     const { user:authUser } = useAuthContext();
     const [loading, setLoading] = useState(false);
@@ -25,15 +26,11 @@ const addFriendsScreen = () => {
     const { previousScreen, currUsers, roomId} = route.params as { previousScreen: string, currUsers:string[], roomId: string };
     const { selectedUsersState, dispatch } = useSelectedUsersContext();
     
-    
-    
-
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const initialUsers = await searchUserApi('') as never[];
-                console.log("users: ", initialUsers);
-                setUsers(initialUsers.filter((user:User) => user._id != authUser?._id));
+                setUsers(initialUsers.filter((user: User) => user._id != authUser?._id));
             } catch (error) {
                 console.error('Error fetching initial users:', error);
             }

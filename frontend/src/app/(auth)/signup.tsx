@@ -68,11 +68,11 @@ const signup = () => {
       router.push("../(tabs)/home/");
       console.log(json.user);
       dispatch({ type: "LOGIN", payload: json.user });
-      try {
-        await AsyncStorage.setItem("user", JSON.stringify(json.user));
-      } catch (e) {
-        console.log(e);
-      }
+      // try {
+      //   await AsyncStorage.setItem("user", JSON.stringify(json.user));
+      // } catch (e) {
+      //   console.log(e);
+      // }
     }
   };
 

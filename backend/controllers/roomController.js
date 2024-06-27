@@ -120,6 +120,22 @@ const removeUser = async (req, res) => {
     }
   }
 
+  const fetchVibesAndPrice  = async (req, res) => {
+    const { roomId } = req.body;
+    try {
+        // Fetch the room to get the current users array
+        const room = await Room.findById(roomId).select('vibes price');
+        if (!room) {
+            return res.status(404).json({ error: 'Room not found' });
+        }
+
+
+        res.status(200).json({ vibes: room.vibes, price: room.price });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+  }
+
 
   const deleteRoom = async (req, res) => {
     const { roomId } = req.body;
@@ -140,4 +156,4 @@ const removeUser = async (req, res) => {
       res.status(500).json({ message: 'Internal server error', error });
     }
   };
-module.exports = { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers};
+module.exports = { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice};
