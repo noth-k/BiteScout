@@ -25,9 +25,10 @@ interface Place {
 
 interface Props {
   selectedPrice: string;
+  selectedVibe: string;
 }
 
-const DiningPlaces: React.FC<Props> = ({ selectedPrice }) => {
+const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
   const { user } = useAuthContext(); // Get the current user from the authentication context
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
     null
@@ -35,6 +36,113 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice }) => {
   const [places, setPlaces] = useState<Place[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const vibes: { [key: string]: string[] } = {
+    Cozy: [
+      "intimate",
+      "warm",
+      "comfortable",
+      "snug",
+      "homely",
+      "welcoming",
+      "friendly",
+      "relaxed",
+      "quiet",
+      "charming",
+      "cozy",
+    ],
+    Modern: [
+      "contemporary",
+      "sleek",
+      "stylish",
+      "minimalist",
+      "innovative",
+      "trendy",
+      "urban",
+      "cutting-edge",
+      "sophisticated",
+      "fashionable",
+      "modern",
+    ],
+    Casual: [
+      "laid-back",
+      "informal",
+      "easygoing",
+      "relaxed",
+      "comfortable",
+      "unpretentious",
+      "friendly",
+      "chill",
+      "simple",
+      "down-to-earth",
+      "casual",
+    ],
+    Elegant: [
+      "classy",
+      "refined",
+      "sophisticated",
+      "chic",
+      "graceful",
+      "luxurious",
+      "stylish",
+      "polished",
+      "posh",
+      "upscale",
+      "elegant",
+    ],
+    Lively: [
+      "vibrant",
+      "bustling",
+      "energetic",
+      "exciting",
+      "dynamic",
+      "upbeat",
+      "animated",
+      "fun",
+      "spirited",
+      "active",
+      "lively",
+    ],
+    Scenic: [
+      "picturesque",
+      "beautiful",
+      "breathtaking",
+      "panoramic",
+      "charming",
+      "lovely",
+      "stunning",
+      "gorgeous",
+      "aesthetic",
+      "idyllic",
+      "scenic",
+    ],
+    Authentic: [
+      "genuine",
+      "traditional",
+      "real",
+      "original",
+      "classic",
+      "cultural",
+      "historic",
+      "true",
+      "legitimate",
+      "local",
+      "authentic",
+    ],
+    Convenient: [
+      "accessible",
+      "handy",
+      "practical",
+      "nearby",
+      "easy",
+      "efficient",
+      "quick",
+      "simple",
+      "comfortable",
+      "useful",
+      "convenient",
+    ],
+  };
 
   useEffect(() => {
     requestLocationPermission();
@@ -58,20 +166,29 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice }) => {
     lat: number,
     lng: number,
     radius: number,
-    keyword: string
+    keyword: string | null
   ) => {
+    const params: any = {
+      location: `${lat},${lng}`,
+      radius,
+      type: "restaurant",
+      key: "AIzaSyBsZsI8YQPYyEDGh1sPhaTeu4wNhRXvk3Y", // use environment variable for the API key
+    };
+
+    if (keyword && keyword.toLowerCase() !== "nil") {
+      params.keyword = keyword; // use the keyword only if it's not "Nil"
+    }
+
     const response = await axios.get(
       `https://maps.googleapis.com/maps/api/place/nearbysearch/json`,
       {
-        params: {
-          location: `${lat},${lng}`,
-          radius,
-          type: "restaurant",
-          keyword, // Use the keyword directly in the API call
-          key: "AIzaSyBsZsI8YQPYyEDGh1sPhaTeu4wNhRXvk3Y", // use environment variable for the API key
-        },
-        timeout: 50000, // increase timeout to 30 seconds, for bigger search radius
+        params,
+        timeout: 30000, // increase timeout to 30 seconds, for bigger search radius
       }
+    );
+
+    console.log(
+      `Fetched ${response.data.results.length} places for radius ${radius}m with keyword "${keyword}"`
     );
 
     return response.data.results.map((place: any) => ({
@@ -139,12 +256,12 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice }) => {
         2000,
         user.restrictions
       );
-      // const radius4km = await fetchNearbyPlaces(
-      //   lat,
-      //   lng,
-      //   4000,
-      //   user.restrictions
-      // );
+      const radius4km = await fetchNearbyPlaces(
+        lat,
+        lng,
+        4000,
+        user.restrictions
+      );
       const radius5km = await fetchNearbyPlaces(
         lat,
         lng,
@@ -153,7 +270,12 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice }) => {
       );
 
       // combine and remove duplicates
-      const allPlaces = [...radius1km, ...radius2km, ...radius5km];
+      const allPlaces = [
+        ...radius1km,
+        ...radius2km,
+        ...radius4km,
+        ...radius5km,
+      ];
       const uniquePlaces = Array.from(
         new Map(allPlaces.map((place) => [place.place_id, place])).values()
       );
@@ -162,7 +284,7 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice }) => {
         uniquePlaces.map((place) => fetchPlaceDetails(place.place_id))
       );
 
-      console.log("Detailed places fetched:", detailedPlaces);
+      // console.log("Detailed places fetched:", detailedPlaces);
 
       const userRestrictions = user.restrictions; // Directly access user restrictions
       const filteredPlaces = filterPlacesByRestrictions(
@@ -175,12 +297,19 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice }) => {
         selectedPrice
       );
 
-      setPlaces(priceFilteredPlaces);
+      const vibeFilteredPlaces = filterPlacesByVibe(
+        priceFilteredPlaces,
+        selectedVibe
+      );
+
+      // console.log("Price filtered places:", priceFilteredPlaces);
+
+      setPlaces(vibeFilteredPlaces);
 
       // Navigate to Recommendations with the filtered places
       router.push({
         pathname: "/(tabs)/home/recommendations",
-        params: { places: JSON.stringify(priceFilteredPlaces) },
+        params: { places: JSON.stringify(vibeFilteredPlaces) },
       });
     } catch (error) {
       console.error(error);
@@ -231,13 +360,34 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice }) => {
     });
   };
 
+  const filterPlacesByVibe = (places: Place[], selectedVibe: string) => {
+    if (!selectedVibe) return places;
+
+    const keywords = vibes[selectedVibe] || [];
+    const keywordsLower = keywords.map((keyword) => keyword.toLowerCase());
+
+    return places.filter((place) => {
+      const reviews = place.reviews.toLowerCase();
+      const description = place.description.toLowerCase();
+      const website = place.website.toLowerCase();
+      const types = place.types.join(" ").toLowerCase();
+      const name = place.name.toLowerCase();
+      const vicinity = place.vicinity.toLowerCase();
+      return keywordsLower.some((keyword) =>
+        [reviews, description, website, types, name, vicinity].some((text) =>
+          text.includes(keyword)
+        )
+      );
+    });
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.recommendButton}
         onPress={fetchRecommendations}
       >
-        { !loading && <Text style={styles.recommendButtonText}>Recommend</Text>}
+        {!loading && <Text style={styles.recommendButtonText}>Recommend</Text>}
         {loading && <ActivityIndicator size="small" color="#0000ff" />}
       </TouchableOpacity>
     </View>
@@ -264,11 +414,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     width: "90%",
-    marginTop:'10%',
-    shadowColor: 'black',
+    marginTop: "10%",
+    shadowColor: "black",
     shadowOffset: {
-        width: -2,
-        height: 2,
+      width: -2,
+      height: 2,
     },
     shadowOpacity: 0.2,
     shadowRadius: 3,
@@ -276,8 +426,8 @@ const styles = StyleSheet.create({
   recommendButtonText: {
     color: "#fff",
     fontSize: 18,
-    fontFamily:'Inter',
-    fontWeight:'400',
+    fontFamily: "Inter",
+    fontWeight: "400",
   },
 });
 
