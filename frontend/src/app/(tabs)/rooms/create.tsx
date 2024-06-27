@@ -55,11 +55,11 @@ const createRoom = () => {
         console.log("user", updatedUser.user);
         authDispatch({ type: "LOGIN", payload: updatedUser.user });
 
-        try {
-            await AsyncStorage.setItem("user", JSON.stringify(updatedUser.user));
-        } catch (e) {
-            console.log("Failed to save user token");
-        } 
+        // try {
+        //     await AsyncStorage.setItem("user", JSON.stringify(updatedUser.user));
+        // } catch (e) {
+        //     console.log("Failed to save user token");
+        // } 
         
         resetFields();
         router.push('/(tabs)/rooms/');
