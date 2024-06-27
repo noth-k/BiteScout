@@ -157,4 +157,17 @@ const removeUser = async (req, res) => {
       res.status(500).json({ message: 'Internal server error', error });
     }
   };
-module.exports = { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice};
+
+  const fetchRestrictions = async (req, res) => {
+    const { roomId } = req.body;
+    try {
+      const room = await Room.findById(roomId).select('restrictions');
+      if (!room) {
+        return res.status(404).json({ error: 'Room not found' });
+    }
+    res.status(200).json({ restrictions: room.restrictions });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+module.exports = { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice, fetchRestrictions};
