@@ -30,7 +30,7 @@ const fetchRoomNames = async (req, res) => {
 }
 
 const updateRoom = async (req, res) => {
-    const { id, newUsers } = req.body;
+    const { id, newUsers, newRestrictions } = req.body;
     try {
         // Fetch the room to get the current users array
         const room = await Room.findById(id);
@@ -40,6 +40,7 @@ const updateRoom = async (req, res) => {
 
         // Update the users array
         room.users = [...room.users, ...newUsers];
+        room.restrictions = [...room.restrictions, ...newRestrictions];
 
         // Save the updated room
         await room.save();

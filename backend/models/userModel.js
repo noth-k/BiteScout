@@ -62,8 +62,7 @@ userSchema.statics.signup = async function (email, password, name, preferences, 
     name,
     preferences,
     restrictions,
-    rooms:[] });
-
+    rooms:[] })
   return user;
 };
 
