@@ -73,6 +73,7 @@ export const vibesAndPriceApi = (roomId:string) => {
     return api('room/vibesAndPrice', {method:ApiType.POST, body: {roomId}});
 }
 
+
 export const roomRestrictionsApi = (roomId:string) => {
     return api('room/restrictions', {method:ApiType.POST, body: {roomId}});
 }

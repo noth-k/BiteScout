@@ -1,8 +1,8 @@
-import React from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import { AuthContextProvider } from "@/providers/AuthProvider"; // Import AuthContextProvider
+import { AuthContextProvider } from "@/providers/AuthProvider";
 
 interface Place {
   place_id: string;
@@ -15,6 +15,19 @@ const Recommendations: React.FC = () => {
   const { places } = useLocalSearchParams() as { places: string };
   const parsedPlaces: Place[] = JSON.parse(places);
 
+  useEffect(() => {
+    if (parsedPlaces.length === 0) {
+      Alert.alert(
+        "No matches found",
+        "Please adjust search filters and try again!"
+      );
+      router.back();
+    }
+  }, [parsedPlaces, router]);
+
+  const randomPlace =
+    parsedPlaces[Math.floor(Math.random() * parsedPlaces.length)];
+
   return (
     <View style={styles.container}>
       <FontAwesome
@@ -22,16 +35,17 @@ const Recommendations: React.FC = () => {
         style={styles.back}
         onPress={() => router.back()}
       />
-      <FlatList
-        data={parsedPlaces}
-        keyExtractor={(item) => item.place_id}
-        renderItem={({ item }) => (
+      {parsedPlaces.length > 0 && (
+        <View style={styles.recommendationContainer}>
+          <Text style={styles.header}>
+            We recommend you try the following restaurant!
+          </Text>
           <View style={styles.placeItem}>
-            <Text style={styles.placeName}>{item.name}</Text>
-            <Text style={styles.placeAddress}>{item.vicinity}</Text>
+            <Text style={styles.placeName}>{randomPlace.name}</Text>
+            <Text style={styles.placeAddress}>{randomPlace.vicinity}</Text>
           </View>
-        )}
-      />
+        </View>
+      )}
     </View>
   );
 };
@@ -40,25 +54,48 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 10,
-    marginTop: 40,
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 60,
   },
   back: {
     fontSize: 24,
-    padding: 10,
+    paddingTop: 40,
+    paddingHorizontal: 10,
+    position: "absolute",
+    top: 20,
+    left: 10,
+  },
+  recommendationContainer: {
+    alignItems: "center",
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#333",
   },
   placeItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    padding: 20,
+    borderWidth: 2,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    backgroundColor: "#f9f9f9",
+    width: "100%",
+    alignItems: "center",
   },
   placeName: {
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: "bold",
+    color: "#000",
+    marginBottom: 10,
   },
   placeAddress: {
-    fontSize: 14,
+    fontSize: 18,
     color: "#555",
+    textAlign: "center",
   },
 });
 
