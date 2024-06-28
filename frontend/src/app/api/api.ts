@@ -45,8 +45,8 @@ export const fetchRoomNames = () => {
     return api('room/names', {method:ApiType.POST})
 }
 
-export const updateRoomApi = (id:string, newUsers: string[]) => {
-    return api('room/update', {method:ApiType.POST, body:{ id, newUsers}})
+export const updateRoomApi = (id:string, newUsers: string[], newRestrictions:string[]) => {
+    return api('room/update', {method:ApiType.POST, body:{ id, newUsers, newRestrictions}})
 }
 
 export const removeUserApi = (roomId:string, userId: string) => {
@@ -77,3 +77,4 @@ export const vibesAndPriceApi = (roomId:string) => {
 export const roomRestrictionsApi = (roomId:string) => {
     return api('room/restrictions', {method:ApiType.POST, body: {roomId}});
 }
+

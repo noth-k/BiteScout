@@ -84,6 +84,7 @@ const addFriendsScreen = () => {
       setSelectedUsers((prevSelected) => [...prevSelected, user]);
       console.log(selectedUsers);
     }
+// <<<<<<< grpreco
   };
 
   //from create
@@ -116,6 +117,29 @@ const addFriendsScreen = () => {
     for (const userId of newUserIds) {
       const json = await updateRoomsApi(userId, roomId);
       console.log("updated user");
+// =======
+
+//     //from room
+//     const handleAddUsers = async() => {
+
+//         //filter out the current users
+//         const newUserIds = selectedUsers.map(user => user?._id || "").filter(userId => !currUsers.includes(userId));
+//         console.log(newUserIds);
+
+//         const newUserRestrictions = selectedUsers.filter(user => !currUsers.includes(user?._id || "")).map(user => user.restrictions);
+
+//         //update the room to include new users
+//         const json = await updateRoomApi(roomId, newUserIds, newUserRestrictions);
+//         console.log("updated room",json)
+
+//         //update the rooms array in all new users:
+//         for (const userId of newUserIds ) {
+//             const json = await updateRoomsApi(userId, roomId);
+//             console.log("updated user");
+//         }
+//         setSelectedUsers([]);
+//         router.back();
+// >>>>>>> main
     }
     setSelectedUsers([]);
     router.back();
