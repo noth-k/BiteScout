@@ -22,9 +22,9 @@ const createRoom = () => {
     const [error, setError] = useState<string | null>(null);
     
     const usersId = selectedUsersState.map(user => user._id);
-    usersId.push(user?._id);
+    usersId.unshift(user?._id);
     const usersRestrictions = selectedUsersState.map(user => user.restrictions);
-    usersRestrictions.push(user?.restrictions || "undefined");
+    usersRestrictions.unshift(user?.restrictions || "undefined");
 
     const handleSubmit = async () => {
         console.log("members: ", usersId);
@@ -53,7 +53,7 @@ const createRoom = () => {
         //update auth context
         const updatedUser:any = await fetchUserDataApi(user?._id);
         console.log("user", updatedUser.user);
-        router.push('./index');
+        router.push('/(tabs)/rooms');
         authDispatch({ type: "LOGIN", payload: updatedUser.user });
 
         // try {

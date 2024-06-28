@@ -52,28 +52,42 @@ const updateRoom = async (req, res) => {
 }
 
 const removeUser = async (req, res) => {
-    const { roomId, userId } = req.body;
-  
-    try {
-      // Find the room by ID and update the users array
-      const room = await Room.findByIdAndUpdate(
-        roomId,
-        { $pull: { users: userId } },
-        { new: true } // This option returns the modified document
-      );
-  
-      // Check if the room was found and updated
-      if (!room) {
-        return res.status(404).json({ message: 'Room not found' });
-      }
-  
-      // Send the updated room as a response
-      res.status(200).json(room);
-    } catch (error) {
-      // Handle any errors that occur
-      res.status(500).json({ message: 'Internal server error', error });
+  const { roomId, userId } = req.body;
+
+  try {
+    // Find the room by ID
+    const room = await Room.findById(roomId);
+
+    // Check if the room was found
+    if (!room) {
+      return res.status(404).json({ message: 'Room not found' });
     }
-  };
+
+    // Find the index of the userId in the users array
+    const userIndex = room.users.indexOf(userId);
+    
+    // If userId is not found, return an error
+    if (userIndex === -1) {
+      return res.status(404).json({ message: 'User not found in room' });
+    }
+
+    // Pull the userId from the users array
+    room.users.splice(userIndex, 1);
+
+    // Pull the corresponding restriction value from the restrictions array
+    room.restrictions.splice(userIndex, 1);
+
+    // Save the updated room document
+    await room.save();
+
+    // Send the updated room as a response
+    res.status(200).json(room);
+  } catch (error) {
+    // Handle any errors that occur
+    res.status(500).json({ message: 'Internal server error', error });
+  }
+};
+
 
   const updateSubmittedUsers = async (req, res) => {
     const { roomId, userId, vibe, price } = req.body;

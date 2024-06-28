@@ -17,7 +17,6 @@ const addFriendsScreen = () => {
     
     const { user:authUser } = useAuthContext();
     const [search, setSearch] = useState('');
-    const { user:authUser } = useAuthContext();
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
