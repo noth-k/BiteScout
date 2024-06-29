@@ -172,7 +172,7 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
       location: `${lat},${lng}`,
       radius,
       type: "restaurant",
-      key: "AIzaSyBsZsI8YQPYyEDGh1sPhaTeu4wNhRXvk3Y", // use environment variable for the API key
+      key: "AIzaSyD7KpFMQMMe2Ry6MC_q6_286QSdjt2Lvvc", // use environment variable for the API key
     };
 
     if (keyword && keyword.toLowerCase() !== "nil") {
@@ -204,7 +204,7 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
       {
         params: {
           place_id: placeId,
-          key: "AIzaSyBsZsI8YQPYyEDGh1sPhaTeu4wNhRXvk3Y", // use environment variable for the API key
+          key: "AIzaSyD7KpFMQMMe2Ry6MC_q6_286QSdjt2Lvvc", // use environment variable for the API key
         },
         timeout: 50000,
       }
