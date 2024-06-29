@@ -19,6 +19,7 @@ import CircularProgress from "@/components/CircularProgress";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useFocusEffect } from "@react-navigation/native";
 import GroupReco from "@/components/GroupReco"; // Make sure this path is correct
+import Colors from "@/constants/Colors";
 
 const RoomScreen = () => {
   const { id } = useLocalSearchParams();
@@ -111,7 +112,7 @@ const RoomScreen = () => {
             submitCount={roomData?.submittedUsers.length || 0}
             style={{ marginLeft: 30 }}
           />
-          <View>
+          <View style={{backgroundColor:colors.primary400}}>
             {roomData?.submittedUsers.length !== roomData?.users.length && (
               <Text style={styles.waitLabel} onPress={handleWaitlist}>
                 Waiting on...
@@ -119,7 +120,7 @@ const RoomScreen = () => {
             )}
 
             {roomData?.submittedUsers.length === roomData?.users.length && (
-              <Text style={styles.submit} onPress={handleReset}>
+              <Text style={styles.waitLabel} onPress={handleReset}>
                 Reset Room
               </Text>
             )}
@@ -158,7 +159,7 @@ export default RoomScreen;
 const styles = StyleSheet.create({
   header: {
     backgroundColor: colors.primary400,
-    height: "50%",
+    height: "55%",
     borderRadius: 15,
     shadowColor: "black",
     shadowOffset: {
@@ -170,11 +171,12 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    height: "25%",
+    height: "30%",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 10,
+    backgroundColor:colors.primary400,
   },
   back: {
     fontSize: 24,
@@ -182,7 +184,7 @@ const styles = StyleSheet.create({
   },
   settings: {
     fontSize: 25,
-    color: "black",
+    color: "white",
   },
   roomName: {
     fontFamily: "Inter",
@@ -197,6 +199,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     justifyContent: "space-between",
     alignItems: "center",
+    backgroundColor:colors.primary400,
+    marginRight:20,
   },
   waitLabel: {
     color: "white",
@@ -217,7 +221,7 @@ const styles = StyleSheet.create({
   submit: {
     backgroundColor: "white",
     padding: 10,
-    width: "60%",
+    width: "100%",
     alignSelf: "center",
     borderRadius: 10,
     shadowColor: "black",
@@ -227,7 +231,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.5,
     shadowRadius: 3,
-    marginTop: 20,
+    marginTop: 40,
   },
   submitText: {
     color: colors.primary400,

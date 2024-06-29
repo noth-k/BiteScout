@@ -178,7 +178,7 @@ const GroupReco: React.FC<GroupRecoProps> = ({ roomId }) => {
       location: `${lat},${lng}`,
       radius,
       type: "restaurant",
-      key: "AIzaSyBsZsI8YQPYyEDGh1sPhaTeu4wNhRXvk3Y", // Replace with your API key
+      key: "AIzaSyD7KpFMQMMe2Ry6MC_q6_286QSdjt2Lvvc", // Replace with your API key
     };
 
     if (keyword && keyword.toLowerCase() !== "nil") {
@@ -210,7 +210,7 @@ const GroupReco: React.FC<GroupRecoProps> = ({ roomId }) => {
       {
         params: {
           place_id: placeId,
-          key: "AIzaSyBsZsI8YQPYyEDGh1sPhaTeu4wNhRXvk3Y", // Replace with your API key
+          key: "AIzaSyD7KpFMQMMe2Ry6MC_q6_286QSdjt2Lvvc", // Replace with your API key
         },
         timeout: 50000,
       }
@@ -427,12 +427,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   recommendButton: {
-    backgroundColor: colors.primary400,
+    backgroundColor: "white",
+    width: "85%",
     padding: 15,
     margin: 5,
     alignItems: "center",
     borderRadius: 10,
-    width: "90%",
     marginTop: 20,
     shadowColor: "black",
     shadowOffset: {
@@ -443,13 +443,13 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   recommendButtonText: {
-    color: "#fff",
+    color: colors.primary400,
     fontSize: 18,
     fontFamily: "Inter",
     fontWeight: "400",
   },
   recommendationContainer: {
-    marginTop: 40,
+    marginTop: 70,
     alignItems: "center",
   },
   recommendationTitle: {
