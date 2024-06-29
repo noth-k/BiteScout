@@ -417,12 +417,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   recommendButton: {
-    backgroundColor: colors.primary400,
+    backgroundColor: "white",
+    width: "85%",
     padding: 15,
     margin: 5,
     alignItems: "center",
     borderRadius: 10,
-    width: "90%",
     marginTop: 20,
     shadowColor: "black",
     shadowOffset: {
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   recommendButtonText: {
-    color: "#fff",
+    color: colors.primary400,
     fontSize: 18,
     fontFamily: "Inter",
     fontWeight: "400",
