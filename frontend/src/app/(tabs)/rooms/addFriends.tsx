@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { searchUserApi, updateRoomApi, updateRoomsApi } from "../../api/api";
 import MemberListItem from '@/components/MemberListItem';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { User } from '@/types';
 import { useRouter } from 'expo-router';
 import { useSelectedUsersContext } from '@/providers/SelectedUsersProvider';
