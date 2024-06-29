@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import * as Location from "expo-location";
 import axios from "axios";
+import { useRouter } from "expo-router";
 import { useAuthContext } from "@/providers/AuthProvider";
 import {
   fetchRoomData,
@@ -33,10 +34,10 @@ interface GroupRecoProps {
 
 const GroupReco: React.FC<GroupRecoProps> = ({ roomId }) => {
   const { user } = useAuthContext();
+  const router = useRouter();
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
     null
   );
-  const [recommendedPlace, setRecommendedPlace] = useState<Place | null>(null);
   const [loading, setLoading] = useState(false);
 
   const vibes: { [key: string]: string[] } = {
@@ -307,12 +308,10 @@ const GroupReco: React.FC<GroupRecoProps> = ({ roomId }) => {
         majorityVibe
       );
 
-      const randomPlace =
-        finalFilteredPlaces[
-          Math.floor(Math.random() * finalFilteredPlaces.length)
-        ];
-
-      setRecommendedPlace(randomPlace || null);
+      router.push({
+        pathname: "/(tabs)/home/grprecommendations",
+        params: { places: JSON.stringify(finalFilteredPlaces) },
+      });
     } catch (error) {
       console.error("Error fetching recommendations:", error);
       alert("Failed to fetch recommendations. Please try again.");
@@ -407,15 +406,6 @@ const GroupReco: React.FC<GroupRecoProps> = ({ roomId }) => {
         )}
         {loading && <ActivityIndicator size="small" color="#0000ff" />}
       </TouchableOpacity>
-      {recommendedPlace && (
-        <View style={styles.recommendationContainer}>
-          <Text style={styles.recommendationTitle}>
-            We recommend you try the following restaurant!
-          </Text>
-          <Text style={styles.placeName}>{recommendedPlace.name}</Text>
-          <Text style={styles.placeAddress}>{recommendedPlace.vicinity}</Text>
-        </View>
-      )}
     </View>
   );
 };
@@ -447,27 +437,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: "Inter",
     fontWeight: "400",
-  },
-  recommendationContainer: {
-    marginTop: 70,
-    alignItems: "center",
-  },
-  recommendationTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
-    paddingTop: 20,
-  },
-  placeName: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 10,
-  },
-  placeAddress: {
-    fontSize: 16,
-    color: "gray",
-    textAlign: "center",
   },
 });
 
