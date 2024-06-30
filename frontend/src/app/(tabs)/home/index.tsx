@@ -44,7 +44,7 @@ const Index = () => {
       <View style={styles.display}>
         <Image source={displayVector} style={styles.title} />
       </View>
-      <View style={{ margin: 15 }}>
+      <View style={{ margin: 15, backgroundColor:'white' }}>
         <Text style={styles.label}>SELECT VIBE</Text>
         <FlatList
           data={vibes}
