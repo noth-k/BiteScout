@@ -78,7 +78,7 @@ const signup = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView>
+      <SafeAreaView style={{backgroundColor:'white'}}>
         <FontAwesome
           name="angle-left"
           style={styles.back}
