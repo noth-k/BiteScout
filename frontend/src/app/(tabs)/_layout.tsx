@@ -20,7 +20,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: 'blue', // Set active tab icon color to blue
+        tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tint, // Set inactive tab icon color
         tabBarStyle: { backgroundColor: 'white' },
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.

@@ -40,7 +40,7 @@ const Index = () => {
   };
 
   return (
-    <View>
+    <View style={{backgroundColor:'white'}}>
       <View style={styles.display}>
         <Image source={displayVector} style={styles.title} />
       </View>
