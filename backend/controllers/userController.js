@@ -122,7 +122,9 @@ const removeRoomFromUser = async (req, res) => {
         }
       );
       // Send a success response
-      res.status(200).json({ message: 'Room removed from user successfully' });
+      const updatedUser = await User.findById(userId);
+
+      res.status(200).json({ message: 'Room removed from user successfully', updatedUser });
     } catch (error) {
       // Handle any errors
       res.status(400).json({ error: error.message });

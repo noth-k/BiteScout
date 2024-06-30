@@ -12,7 +12,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 const Settings = () => {
   const router = useRouter();
-  const { user: authUser } = useAuthContext();
+  const { user: authUser, dispatch:authDispatch } = useAuthContext();
   const { roomData, currUsers } = useLocalSearchParams();
   const [screenUpdate, setScreenUpdate] = useState(0);
   const [parsedcurrUsers, setParsedCurrUsers] = useState(JSON.parse(typeof currUsers === 'string' ? currUsers : '[]'));
@@ -67,16 +67,24 @@ const Settings = () => {
 
   const handleRemove = async (userId: string) => {
     await removeUserApi(parsedRoomData?._id, userId);
-    await removeRoomFromUserApi(parsedRoomData?._id, userId);
+    const json:any = await removeRoomFromUserApi(parsedRoomData?._id, userId);
+    console.log(json);
+    if (authUser?._id == userId) {
+        authDispatch({ type: "LOGIN", payload: json.updatedUser });
+        router.push('/rooms/')
+    }
     setScreenUpdate((prev) => prev + 1);
   };
 
   const handleDelete = async () => {
-    for (const user of parsedcurrUsers) {
-        await removeRoomFromUserApi(parsedRoomData?._id, user._id);
-    }
     await deleteRoomApi(parsedRoomData?._id);
-    router.push('/rooms/ ');
+    for (const user of parsedcurrUsers) {
+        const json:any = await removeRoomFromUserApi(parsedRoomData?._id, user._id);
+        if (user._id == authUser?._id) {
+            authDispatch({ type: "LOGIN", payload: json.updatedUser});
+        }
+    }
+    router.push('/rooms/');
   };
 
   return (
@@ -96,7 +104,7 @@ const Settings = () => {
           <MemberListItem
             user={user}
             key={user._id}
-            deletable={true}
+            deletable={parsedRoomData.submittedUsers.length == 0}
             selected={authUser?._id === user._id}
             deletableFunc={() => handleRemove(user._id || "")}
           />
@@ -161,3 +169,7 @@ const styles = StyleSheet.create({
     marginTop: 18,
   },
 });
+function authDispatch(arg0: { type: string; payload: any; }) {
+    throw new Error('Function not implemented.');
+}
+
