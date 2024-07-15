@@ -26,6 +26,7 @@ interface Place {
   website: string;
   types: string[];
   price_level: number;
+  googleMapsLink: string; // Added googleMapsLink attribute
 }
 
 interface GroupRecoProps {
@@ -218,6 +219,7 @@ const GroupReco: React.FC<GroupRecoProps> = ({ roomId }) => {
     );
 
     const result = response.data.result;
+    const googleMapsLink = `https://www.google.com/maps/search/?api=1&query=Google&query_place_id=${placeId}`;
     return {
       place_id: result.place_id,
       name: result.name,
@@ -231,6 +233,7 @@ const GroupReco: React.FC<GroupRecoProps> = ({ roomId }) => {
       website: result.website || "",
       types: result.types || [],
       price_level: result.price_level || 0,
+      googleMapsLink, // Added googleMapsLink attribute
     };
   };
 
