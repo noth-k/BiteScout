@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import React from 'react';
 import { User } from '@/types';
 import { FontAwesome5 } from '@expo/vector-icons';
@@ -10,10 +10,30 @@ type MemberListItemProps = {
     deletableFunc?: () => void
 }
 
+const avatarImages: { [key: string]: any } = {
+  man_1: require('@assets/images/man_1.png'),
+  man_2: require('@assets/images/man_2.png'),
+  man_3: require('@assets/images/man_3.png'),
+  man_4: require('@assets/images/man_4.png'),
+  man_5: require('@assets/images/man_5.png'),
+  man_6: require('@assets/images/man_6.png'),
+  man_7: require('@assets/images/man_7.png'),
+  man_8: require('@assets/images/man_8.png'),
+  woman_1: require('@assets/images/woman_1.png'),
+  woman_2: require('@assets/images/woman_2.png'),
+  woman_3: require('@assets/images/woman_3.png'),
+  woman_4: require('@assets/images/woman_4.png'),
+  woman_5: require('@assets/images/woman_5.png'),
+  woman_6: require('@assets/images/woman_6.png'),
+  woman_7: require('@assets/images/woman_7.png'),
+  woman_8: require('@assets/images/woman_8.png'),
+};
+
 const MemberListItem = ({ user, selected, deletable, deletableFunc }: MemberListItemProps) => {
+  const avatarSource = avatarImages[user?.avatar || 'man_1'];
   return (
     <View style={!selected ? styles.memberContainer : [styles.memberContainer,{backgroundColor:'lightgrey'}]}>
-      <View style={styles.picture}></View>
+      <Image source={avatarSource} resizeMode="contain" style={styles.picture}/>
       <View style={{flex:7}}>
         <Text style={styles.label}>{user?.name}</Text>
         <Text style={styles.label}>{user?.email}</Text>
@@ -42,10 +62,8 @@ const styles = StyleSheet.create({
         marginBottom:7,
     },
     picture: {
-        backgroundColor:'#e0e0e0',
         height: 40,
         width:40,
-        borderRadius:50,
         flex:1,
     },
     label: {
