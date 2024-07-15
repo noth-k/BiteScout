@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth, removeRoomFromUser  } = require('../controllers/userController');
+const { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth, removeRoomFromUser, checkEmailPassword  } = require('../controllers/userController');
 
 const router = express.Router();
 
@@ -12,7 +12,8 @@ router.post('/login', loginUser);
 // signup route
 router.post('/signup', signupUser);
 
-// router.get('/hello', hello)
+//check email and password
+router.post('/check', checkEmailPassword);
 
 //update user details
 router.post('/update', updateUserDetails);

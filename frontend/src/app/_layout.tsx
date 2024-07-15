@@ -14,6 +14,7 @@ import { AuthContextProvider } from "@/providers/AuthProvider";
 import { SelectedUsersProvider } from "@/providers/SelectedUsersProvider";
 
 import React from "react";
+import { SignUpProvider } from "@/providers/SignUpProvider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -57,16 +58,18 @@ function RootLayoutNav() {
 
   return (
     <AuthContextProvider>
-      <SelectedUsersProvider>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-        </Stack>
-      </ThemeProvider>
-      </SelectedUsersProvider>
+      <SignUpProvider>
+        <SelectedUsersProvider>
+        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+          <Stack>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+          </Stack>
+        </ThemeProvider>
+        </SelectedUsersProvider>
+      </SignUpProvider>
     </AuthContextProvider>
   );
 }

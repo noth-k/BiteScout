@@ -27,10 +27,10 @@ const loginUser = async (req, res) => {
 // signup user
 //in a route handler, can only use res.json once *** multiple calls will lead to errors
 const signupUser = async (req, res) => {
-    const { email, password, name, preferences, restrictions } = req.body;
+    const { email, password, name, preferences, restrictions, avatar } = req.body;
     //to catch error: "email alr in use" or if input does not follow the Schema
     try {
-        const user = await User.signup(email, password, name, preferences, restrictions);
+        const user = await User.signup(email, password, name, preferences, restrictions, avatar);
         //create tokem
         const token = createToken(user._id)
         res.status(200).json({email, token, user})
@@ -38,6 +38,17 @@ const signupUser = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.json({error: error.message})
+    }
+}
+
+const checkEmailPassword = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        const isSuccess = await User.emailPasswordCheck(email, password);
+        res.status(200).json({isSuccess});
+    } catch (error) {
+        console.log(error);
+        res.json({error: error.message});
     }
 }
 
@@ -151,4 +162,4 @@ const fetchUsers = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth, removeRoomFromUser };
+module.exports = { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth, removeRoomFromUser, checkEmailPassword };

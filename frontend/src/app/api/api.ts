@@ -9,6 +9,10 @@ export const signUpApi = (user: User) => {
     return api('user/signup', {method: ApiType.POST, body: user})
 }
 
+export const checkEmailPasswordApi = (email:String, password: String) => {
+    return api('user/check', {method: ApiType.POST, body: {email, password}})
+}
+
 export const loginApi = (user: LoginUser) => {
     return api('user/login', {method: ApiType.POST, body: user})
 }
@@ -76,5 +80,11 @@ export const vibesAndPriceApi = (roomId:string) => {
 
 export const roomRestrictionsApi = (roomId:string) => {
     return api('room/restrictions', {method:ApiType.POST, body: {roomId}});
+}
+
+
+//recommendation create. if recommendation created already, it generates the recommendation previously created
+export const createRecommendationApi = (name: String, address: String) => {
+    return api('recommendation/create', {method:ApiType.POST, body: {name, address}});
 }
 

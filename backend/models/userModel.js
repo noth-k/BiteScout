@@ -19,7 +19,7 @@ const userSchema = new Schema({
         required: true,
     }, 
     preferences: {
-        type: String,
+        type: [String],
         required: true,
     },
     restrictions: {
@@ -32,11 +32,34 @@ const userSchema = new Schema({
       ref: 'Room',
       default: []
   },
+  avatar: {
+    type: String,
+    required: true,
+  }
 })
+
+//static check email and password method
+userSchema.statics.emailPasswordCheck = async function (email, password) {
+  if (!validator.isEmail(email)) {
+    throw Error("Invalid Email");
+  }
+
+  if (!validator.isStrongPassword(password)) {
+    throw Error("Password not strong enough");
+  }
+
+  const exists = await this.findOne({ email });
+
+  if (exists) {
+    throw Error("Email already in use");
+  }
+
+  return true;
+}
   
 
 // static signup method
-userSchema.statics.signup = async function (email, password, name, preferences, restrictions) {
+userSchema.statics.signup = async function (email, password, name, preferences, restrictions, avatar) {
   if (!email || !password) {
     throw Error("All fields must be filled");
   }
@@ -62,6 +85,7 @@ userSchema.statics.signup = async function (email, password, name, preferences, 
     name,
     preferences,
     restrictions,
+    avatar,
     rooms:[] })
   return user;
 };

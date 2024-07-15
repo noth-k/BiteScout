@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Touchable,
@@ -18,8 +19,9 @@ import { FontAwesome } from "@expo/vector-icons";
 import CircularProgress from "@/components/CircularProgress";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useFocusEffect } from "@react-navigation/native";
-import GroupReco from "@/components/GroupReco"; // Make sure this path is correct
+import GroupReco from "@/components/GroupReco";
 import Colors from "@/constants/Colors";
+
 
 const RoomScreen = () => {
   const { id } = useLocalSearchParams();
@@ -28,6 +30,7 @@ const RoomScreen = () => {
   const [roomData, setRoomData] = useState<Room | null>(null);
   const [users, setUsers] = useState<User[] | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const currUsers = users?.filter((user: User) =>
     roomData?.users.includes(user._id)
   );
@@ -67,77 +70,83 @@ const RoomScreen = () => {
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const roomResponse: any = await fetchRoomApi(id);
       setRoomData(roomResponse.room);
 
       const usersResponse: any = await fetchAllUsersApi();
       setUsers(usersResponse);
+
+      if (roomResponse.room?.submittedUsers.includes(user?._id || "")) {
+        setSubmitted(true);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
-    }
-  };
-
-  const settingSubmitted = () => {
-    if (roomData?.submittedUsers.includes(user?._id || "")) {
-      setSubmitted(true);
+    } finally {
+      setLoading(false);
     }
   };
 
   useFocusEffect(
     useCallback(() => {
       fetchData();
-      settingSubmitted();
-    }, [id, roomData])
+    }, [id])
   );
 
   return (
     <View style={{ backgroundColor: "white", height: "100%" }}>
       <View style={styles.header}>
-        <View style={styles.title}>
-          <FontAwesome
-            name="angle-left"
-            style={styles.back}
-            onPress={() => router.back()}
-          />
-          <Text style={styles.roomName}>{roomData?.name}</Text>
-          <FontAwesome
-            name="cog"
-            style={styles.settings}
-            onPress={handleSettings}
-          />
-        </View>
-        <View style={styles.roomDetails}>
-          <CircularProgress
-            userCount={roomData?.users.length || 0}
-            submitCount={roomData?.submittedUsers.length || 0}
-            style={{ marginLeft: 30 }}
-          />
-          <View style={{backgroundColor:colors.primary400}}>
-            {roomData?.submittedUsers.length !== roomData?.users.length && (
-              <Text style={styles.waitLabel} onPress={handleWaitlist}>
-                Waiting on...
-              </Text>
-            )}
+        {loading ? (
+          <ActivityIndicator size="small" color="white" style={{marginTop: "50%"}}/>
+        ) : (
+          <>
+            <View style={styles.title}>
+              <FontAwesome
+                name="angle-left"
+                style={styles.back}
+                onPress={() => router.back()}
+              />
+              <Text style={styles.roomName}>{roomData?.name}</Text>
+              <FontAwesome
+                name="cog"
+                style={styles.settings}
+                onPress={handleSettings}
+              />
+            </View>
+            <View style={styles.roomDetails}>
+              <CircularProgress
+                userCount={roomData?.users.length || 0}
+                submitCount={roomData?.submittedUsers.length || 0}
+                style={{ marginLeft: 30 }}
+              />
+              <View style={{ backgroundColor: colors.primary400 }}>
+                {roomData?.submittedUsers.length !== roomData?.users.length && (
+                  <Text style={styles.waitLabel} onPress={handleWaitlist}>
+                    Waiting on...
+                  </Text>
+                )}
 
-            {roomData?.submittedUsers.length === roomData?.users.length && (
-              <Text style={styles.waitLabel} onPress={handleReset}>
-                Reset Room
-              </Text>
-            )}
+                {roomData?.submittedUsers.length === roomData?.users.length && (
+                  <Text style={styles.waitLabel} onPress={handleReset}>
+                    Reset Room
+                  </Text>
+                )}
 
-            <TouchableOpacity
-              style={styles.submit}
-              disabled={roomData?.submittedUsers.includes(user?._id || "")}
-              onPress={handleSubmit}
-            >
-              <Text style={styles.submitText}>Input Filters</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        {roomData &&
-          roomData.submittedUsers.length === roomData.users.length && (
-            <GroupReco roomId={roomData._id!} /> // Use GroupReco component here with non-null assertion
-          )}
+                <TouchableOpacity
+                  style={styles.submit}
+                  disabled={roomData?.submittedUsers.includes(user?._id || "")}
+                  onPress={handleSubmit}
+                >
+                  <Text style={styles.submitText}>Input Filters</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            {roomData &&
+              roomData.submittedUsers.length === roomData.users.length && (
+                <GroupReco roomId={roomData._id!} /> // Use GroupReco component here with non-null assertion
+              )}
+          </>
+        )}
       </View>
       <Text
         style={{
@@ -176,7 +185,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 10,
-    backgroundColor:colors.primary400,
+    backgroundColor: colors.primary400,
   },
   back: {
     fontSize: 24,
@@ -199,8 +208,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor:colors.primary400,
-    marginRight:20,
+    backgroundColor: colors.primary400,
+    marginRight: 20,
   },
   waitLabel: {
     color: "white",

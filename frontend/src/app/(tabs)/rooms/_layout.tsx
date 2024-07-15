@@ -12,6 +12,7 @@ export default function RoomLayout() {
         <Stack.Screen name='[id]' options={{headerShown:false}} />
         <Stack.Screen name='settings' options={{headerShown: false}} />
         <Stack.Screen name='selection' options={{headerShown: false}} />
+        <Stack.Screen name="invite" options={{headerShown:false}}/>
     </Stack>
   )
 }

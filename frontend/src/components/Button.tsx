@@ -1,5 +1,5 @@
 import {
-  Pressable,
+  TouchableOpacity,
   StyleProp,
   StyleSheet,
   Text,
@@ -7,27 +7,24 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import Colors from "../constants/Colors";
-import { forwardRef } from "react";
 import colors from "@assets/colors";
-import React from "react";
+import React, { forwardRef } from "react";
 
 type ButtonProps = {
   text: string;
   buttonStyle?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
-} & React.ComponentPropsWithoutRef<typeof Pressable>;
+} & React.ComponentPropsWithoutRef<typeof TouchableOpacity>;
 
 const Button = forwardRef<View | null, ButtonProps>(
-  ({ text, buttonStyle, textStyle, ...pressableProps }, ref) => {
+  ({ text, buttonStyle, textStyle, ...touchableOpacityProps }, ref) => {
     return (
-      <Pressable
-        ref={ref}
-        {...pressableProps}
+      <TouchableOpacity
+        {...touchableOpacityProps}
         style={[styles.container, buttonStyle]}
       >
         <Text style={[styles.text, textStyle]}>{text}</Text>
-      </Pressable>
+      </TouchableOpacity>
     );
   }
 );

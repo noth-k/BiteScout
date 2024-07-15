@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Share } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import colors from '@assets/colors';
 import { FontAwesome } from '@expo/vector-icons';
@@ -17,6 +17,7 @@ const Settings = () => {
   const [screenUpdate, setScreenUpdate] = useState(0);
   const [parsedcurrUsers, setParsedCurrUsers] = useState(JSON.parse(typeof currUsers === 'string' ? currUsers : '[]'));
   const [parsedRoomData, setParsedRoomData] = useState(JSON.parse(typeof roomData === 'string' ? roomData : '[]'));
+  const url = `exp://192.168.50.72:8081/--/rooms/${parsedRoomData._id}`;
 
   const fetchData = async () => {
     try {
@@ -87,6 +88,32 @@ const Settings = () => {
     router.push('/rooms/');
   };
 
+  const generateInviteDeepLink = (roomId:string) => {
+    return `exp://192.168.50.70:8081/--/rooms/invite?roomId=${roomId}`;
+  }
+
+  const handleShareInvite = async() => {
+
+    try {
+      const deepLink = generateInviteDeepLink(parsedRoomData._id)
+      const result = await Share.share({
+        message: ('Join our room!' + '\n' + deepLink),
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log('shared with activity type of: ', result.activityType)
+        } else {
+          console.log('shared');
+        }
+      } else if (result.activityType === Share.dismissedAction) {
+        console.log('dismissed');
+      }
+    } catch (error:any) {
+      console.log('Error in sharing: ', error.message)
+    }
+  }
+
   return (
     <View style={{ backgroundColor: 'white', height: '100%' }}>
       <View style={styles.header}>
@@ -109,6 +136,7 @@ const Settings = () => {
             deletableFunc={() => handleRemove(user._id || "")}
           />
         ))}
+        <Text style={styles.label} onPress= {handleShareInvite}> Share Invite</Text>
         <Text style={styles.label} onPress={() => handleRemove(authUser?._id || "")}>Leave Room</Text>
         <Text style={styles.label} onPress={handleDelete}>Delete Room</Text>
       </ScrollView>

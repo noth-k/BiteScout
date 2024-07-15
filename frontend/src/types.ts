@@ -7,8 +7,9 @@ export interface LoginUser {
 }
 export interface User extends LoginUser{
     name: string,
-    preferences: string,
+    preferences: string[],
     restrictions: string,
+    avatar?: string,
     _id?:string,
     rooms:string[]
 }

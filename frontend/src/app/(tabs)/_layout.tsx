@@ -5,6 +5,7 @@ import { Link, Tabs } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import colors from "@assets/colors";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -20,8 +21,8 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: 'blue', // Set active tab icon color to blue
-        tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tint, // Set inactive tab icon color
+        tabBarActiveTintColor: colors.primary400, // Set active tab icon color to blue
+        tabBarInactiveTintColor: 'lightgrey', // Set inactive tab icon color
         tabBarStyle: { backgroundColor: 'white' },
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
