@@ -11,8 +11,7 @@ const RoomListItem = ({ label, id }: RoomListItemProps) => {
     const router = useRouter();
     return (
         <TouchableOpacity style={styles.container} onPress={() => router.push(`/(tabs)/rooms/${id}`)}>
-            <View style={styles.picture}></View>
-        <Text style={styles.title}>{label}</Text>
+            <Text style={styles.title}>{label}</Text>
         </TouchableOpacity>
     )
 }
