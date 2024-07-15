@@ -11,6 +11,9 @@ import axios from "axios";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/providers/AuthProvider"; // Import the authentication context
 import colors from "@assets/colors";
+import winkNLP from "wink-nlp";
+import model from "wink-eng-lite-web-model";
+const nlp = winkNLP(model);
 
 interface Place {
   place_id: string;
@@ -21,6 +24,7 @@ interface Place {
   website: string;
   types: string[];
   price_level: number;
+  googleMapsLink: string;
 }
 
 interface Props {
@@ -63,6 +67,9 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
       "sophisticated",
       "fashionable",
       "modern",
+      "fancy",
+      "bistro",
+      "fine",
     ],
     Casual: [
       "laid-back",
@@ -195,6 +202,7 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
       place_id: place.place_id,
       name: place.name,
       vicinity: place.vicinity,
+      googleMapsLink: `https://maps.google.com/?q=${place.name}`,
     }));
   };
 
@@ -224,6 +232,7 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
       website: result.website || "",
       types: result.types || [],
       price_level: result.price_level || 0,
+      googleMapsLink: `https://maps.google.com/?q=${result.name}`,
     };
   };
 
@@ -373,11 +382,13 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
       const types = place.types.join(" ").toLowerCase();
       const name = place.name.toLowerCase();
       const vicinity = place.vicinity.toLowerCase();
-      return keywordsLower.some((keyword) =>
-        [reviews, description, website, types, name, vicinity].some((text) =>
-          text.includes(keyword)
-        )
+
+      const doc = nlp.readDoc(
+        [reviews, description, website, types, name, vicinity].join(" ")
       );
+      const tokens = doc.tokens().out();
+
+      return keywordsLower.some((keyword) => tokens.includes(keyword));
     });
   };
 
