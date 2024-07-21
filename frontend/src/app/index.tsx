@@ -6,6 +6,7 @@ import { useAuthContext } from "@/providers/AuthProvider";
 import { useEffect } from "react";
 import React from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { UpvoteProvider, useUpvoteContext } from "@/providers/UpvoteProvider";
 
 const startVector = require("@assets/images/StartVector.png");
 
@@ -22,27 +23,29 @@ const index = () => {
   }, [user]);
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1, backgroundColor:'white' }}>
-        <View style={styles.container}>
-          <Image source={startVector} style={styles.vector} />
-          <Text style={styles.welcomeText}>Welcome to</Text>
-          <Text style={styles.title}>BiteScout</Text>
-          <Text style={styles.desc}>{desc}</Text>
-          <Button
-            text="Login"
-            buttonStyle={styles.login}
-            onPress={() => router.push("/(auth)/login")}
-          />
-          <Button
-          text="Sign Up"
-          textStyle={{ color: colors.primary800 }}
-          buttonStyle={styles.signUp}
-          onPress={() => router.push("/(auth)/signup_name")}
-          />
-        </View>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <UpvoteProvider>
+      <SafeAreaProvider>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+          <View style={styles.container}>
+            <Image source={startVector} style={styles.vector} />
+            <Text style={styles.welcomeText}>Welcome to</Text>
+            <Text style={styles.title}>BiteScout</Text>
+            <Text style={styles.desc}>{desc}</Text>
+            <Button
+              text="Login"
+              buttonStyle={styles.login}
+              onPress={() => router.push("/(auth)/login")}
+            />
+            <Button
+              text="Sign Up"
+              textStyle={{ color: colors.primary800 }}
+              buttonStyle={styles.signUp}
+              onPress={() => router.push("/(auth)/signup_name")}
+            />
+          </View>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </UpvoteProvider>
   );
 };
 

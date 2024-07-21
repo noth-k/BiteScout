@@ -5,38 +5,42 @@ const validator = require("validator");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password: {
-        type: String, 
-        required: true,
-    },
-    name: {
-        type: String,
-        required: true,
-    }, 
-    preferences: {
-        type: [String],
-        required: true,
-    },
-    restrictions: {
-        type: String,
-        required:true,
-        enum: ["Halal", "Vegetarian", "Vegan", "Nil"],
-    },
-    rooms: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: 'Room',
-      default: []
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  preferences: {
+    type: [String],
+    required: true,
+  },
+  restrictions: {
+    type: String,
+    required: true,
+    enum: ["Halal", "Vegetarian", "Vegan", "Nil"],
+  },
+  rooms: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Room",
+    default: [],
   },
   avatar: {
     type: String,
     required: true,
-  }
-})
+  },
+  upvotedRestaurants: {
+    type: [String], 
+    default: [],
+  },
+});
 
 //static check email and password method
 userSchema.statics.emailPasswordCheck = async function (email, password) {
@@ -55,11 +59,17 @@ userSchema.statics.emailPasswordCheck = async function (email, password) {
   }
 
   return true;
-}
-  
+};
 
 // static signup method
-userSchema.statics.signup = async function (email, password, name, preferences, restrictions, avatar) {
+userSchema.statics.signup = async function (
+  email,
+  password,
+  name,
+  preferences,
+  restrictions,
+  avatar
+) {
   if (!email || !password) {
     throw Error("All fields must be filled");
   }
@@ -86,7 +96,8 @@ userSchema.statics.signup = async function (email, password, name, preferences, 
     preferences,
     restrictions,
     avatar,
-    rooms:[] })
+    rooms: [],
+  });
   return user;
 };
 
@@ -119,6 +130,6 @@ userSchema.statics.getUserRestrictions = async function (email) {
   return user.restrictions;
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;

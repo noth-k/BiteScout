@@ -1,4 +1,4 @@
-import ky from 'ky'
+import ky from 'ky';
 
 export type ApiCall = {
     body?: any,
@@ -12,26 +12,41 @@ export enum ApiType {
     DELETE = 'delete',
 }
 
-export const api = async (url: string, apiCall?: ApiCall) => {
-    const json = await ky(`http://localhost:4000/api/${url}`, {
-        method: apiCall?.method || 'get',
-        json: apiCall?.body
-    })
-    .json()
-    .catch(async (err) => {
-        try {
-            console.log(err)
-            if (err.response) {
-                const error = await err.response.json()
-                err.response.json = error
-                console.log(err)
-                return err
-            }
-            
-        } catch (error) {
-            console.log(error)
+// Create a custom ky instance
+const customKy = ky.create({
+    hooks: {
+        beforeRequest: [
+            (request) => {
+                // Clone the request to set the signal
+                if (!request.signal) {
+                    const controller = new AbortController();
+                    const clonedRequest = new Request(request, { signal: controller.signal });
+                    Object.assign(request, clonedRequest);
+                }
+            },
+        ],
+    },
+});
+
+export const api = async <T>(url: string, apiCall?: ApiCall): Promise<T> => {
+    try {
+        const json = await customKy(`http://localhost:4000/api/${url}`, {
+            method: apiCall?.method || ApiType.GET,
+            json: apiCall?.body
+        }).json<T>();
+        return json;
+    } catch (err: any) {
+        if (err.name === 'TypeError' && err.message.includes('signal.throwIfAborted')) {
+            // Ignore this specific error
+            console.warn('Ignoring signal.throwIfAborted error:', err);
+            return {} as T; // Return an empty object or handle as needed
         }
-        
-    })
-    return json
+        console.error(err);
+        if (err.response) {
+            const error = await err.response.json();
+            console.error(error);
+            throw new Error(error);
+        }
+        throw err;
+    }
 }
