@@ -13,6 +13,7 @@ import { useAuthContext } from "@/providers/AuthProvider"; // Import the authent
 import colors from "@assets/colors";
 import winkNLP from "wink-nlp";
 import model from "wink-eng-lite-web-model";
+import { fetchRestaurantUpvotesApi } from "@/app/api/api";
 const nlp = winkNLP(model);
 
 interface Place {
@@ -219,6 +220,13 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
     );
 
     const result = response.data.result;
+
+    const upvotesResponse = await fetchRestaurantUpvotesApi(placeId);
+    const upvotes =
+      upvotesResponse.success && upvotesResponse.data
+        ? upvotesResponse.data.upvotes
+        : 0;
+
     return {
       place_id: result.place_id,
       name: result.name,
@@ -233,6 +241,7 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
       types: result.types || [],
       price_level: result.price_level || 0,
       googleMapsLink: `https://maps.google.com/?q=${result.name}`,
+      upvotes: upvotes,
     };
   };
 

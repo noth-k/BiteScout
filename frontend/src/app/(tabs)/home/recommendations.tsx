@@ -11,6 +11,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { AuthContextProvider } from "@/providers/AuthProvider";
 import * as Linking from "expo-linking";
+import { fetchRestaurantUpvotesApi } from "@/app/api/api";
 
 interface Place {
   place_id: string;
@@ -18,6 +19,7 @@ interface Place {
   vicinity: string;
   googleMapsLink: string;
   website: string;
+  upvotes: number;
 }
 
 const Recommendations: React.FC = () => {
@@ -35,9 +37,6 @@ const Recommendations: React.FC = () => {
     }
   }, [parsedPlaces, router]);
 
-  const randomPlace =
-    parsedPlaces[Math.floor(Math.random() * parsedPlaces.length)];
-
   const handleOpenLink = (url: string) => {
     if (url && url.startsWith("http")) {
       Linking.openURL(url).catch((err) =>
@@ -48,9 +47,28 @@ const Recommendations: React.FC = () => {
     }
   };
 
+  const getWeightedRandomPlace = (places: Place[]): Place => {
+    const totalWeight = places.reduce(
+      (sum, place) => sum + (place.upvotes || 1),
+      0
+    );
+    let randomWeight = Math.random() * totalWeight;
+
+    for (const place of places) {
+      randomWeight -= place.upvotes || 1;
+      if (randomWeight <= 0) {
+        return place;
+      }
+    }
+
+    return places[0]; // Fallback
+  };
+
+  const randomPlace = getWeightedRandomPlace(parsedPlaces);
+
   return (
     <ImageBackground
-      source={require("../../../../assets/images/RecoBackground.jpeg")} // Path to your new background image
+      source={require("../../../../assets/images/RecoBackground.jpeg")}
       style={styles.background}
     >
       <View style={styles.container}>
@@ -106,11 +124,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 20,
     left: 10,
-    color: "#fff", // Adjust the color to make it visible on the background
+    color: "#fff",
   },
   recommendationContainer: {
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 0.8)", // Add a semi-transparent background to the container
+    backgroundColor: "rgba(255, 255, 255, 0.8)", // semi-transparent background container
     padding: 20,
     borderRadius: 10,
     paddingBottom: 30,

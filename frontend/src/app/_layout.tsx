@@ -12,6 +12,7 @@ import "react-native-reanimated";
 import { useColorScheme } from "../components/useColorScheme";
 import { AuthContextProvider } from "@/providers/AuthProvider";
 import { SelectedUsersProvider } from "@/providers/SelectedUsersProvider";
+import { UpvoteProvider } from "@/providers/UpvoteProvider";
 
 import React from "react";
 import { SignUpProvider } from "@/providers/SignUpProvider";
@@ -58,18 +59,25 @@ function RootLayoutNav() {
 
   return (
     <AuthContextProvider>
-      <SignUpProvider>
-        <SelectedUsersProvider>
-        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-          </Stack>
-        </ThemeProvider>
-        </SelectedUsersProvider>
-      </SignUpProvider>
+      <UpvoteProvider>
+        <SignUpProvider>
+          <SelectedUsersProvider>
+            <ThemeProvider
+              value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+            >
+              <Stack>
+                <Stack.Screen name="index" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="modal"
+                  options={{ presentation: "modal" }}
+                />
+              </Stack>
+            </ThemeProvider>
+          </SelectedUsersProvider>
+        </SignUpProvider>
+      </UpvoteProvider>
     </AuthContextProvider>
   );
 }

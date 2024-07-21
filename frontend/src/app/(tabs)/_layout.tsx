@@ -22,8 +22,8 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: colors.primary400, // Set active tab icon color to blue
-        tabBarInactiveTintColor: 'lightgrey', // Set inactive tab icon color
-        tabBarStyle: { backgroundColor: 'white' },
+        tabBarInactiveTintColor: "lightgrey", // Set inactive tab icon color
+        tabBarStyle: { backgroundColor: "white" },
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
@@ -49,6 +49,21 @@ export default function TabLayout() {
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="restaurant"
+        options={{
+          title: "Restaurants",
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <FontAwesome
+              name="cutlery"
+              color={color}
+              style={{ fontSize: 20 }}
+            />
+          ),
         }}
       />
 

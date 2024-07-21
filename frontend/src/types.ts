@@ -10,7 +10,7 @@ export interface User extends LoginUser{
     preferences: string[],
     restrictions: string,
     avatar?: string,
-    _id?:string,
+    _id:string,
     rooms:string[]
 }
 
@@ -24,3 +24,12 @@ export interface Room {
     vibes: string[],
     price: string[],
 }
+
+export interface Restaurant {
+    id: string;
+    name: string;
+    vicinity: string;
+    upvotes: number;
+    isUpvoted: boolean;
+  }
+  
