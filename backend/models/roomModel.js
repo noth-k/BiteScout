@@ -25,7 +25,11 @@ const roomSchema = new Schema({
     }],
     price: [{
         type:String
-    }]
+    }],
+    recommendations: {
+        type: [String],
+        default: [],
+    }
 
 })
 

@@ -1,5 +1,6 @@
 const express = require('express');
-const { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice, fetchRestrictions } = require('../controllers/roomController');
+const { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice, fetchRestrictions, updateGroupRecommendations } = require('../controllers/roomController');
+const Room = require('../models/roomModel');
 
 const router = express.Router();
 
@@ -19,9 +20,24 @@ router.post('/submitUser', updateSubmittedUsers);
 
 router.post('/reset', resetSubmittedUsers);
 
-router.post('/vibesAndPrice', fetchVibesAndPrice),
+router.post('/vibesAndPrice', fetchVibesAndPrice);
 
-router.post('/restrictions', fetchRestrictions)
+router.post('/restrictions', fetchRestrictions);
+
+router.post('/addRecommendation', updateGroupRecommendations);
+
+router.get('/recommendations', async (req, res) => {
+    try {
+      const { roomId } = req.query;
+      const room = await Room.findById(roomId);
+      if (!room) {
+        return res.status(404).json({ success: false, error: 'Room not found' });
+      }
+      res.status(200).json({ success: true, data: room.recommendations });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
 
 
 module.exports = router;

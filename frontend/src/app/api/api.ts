@@ -146,6 +146,21 @@ export const upvoteRestaurantApi = async (
   });
 };
 
+//create
+export const createResturantApi = (id: string, name: string) => {
+  return api("restaurant/create", { method: ApiType.POST, body: { id, name } });
+}
+
+//update recommendation
+export const updateRecommendationsApi = (userId: string, placeId: string) => {
+  return api("user/addRecommendation", {method:ApiType.POST, body: { userId, placeId }});
+}
+
+//update group recommendation
+export const updateGroupRecommendationsApi = (roomId: string, placeId: string) => {
+  return (api("room/addRecommendation", {method:ApiType.POST, body: {roomId, placeId}}));
+}
+
 export const fetchUserUpvotedRestaurantsApi = async (
   userId: string
 ): Promise<ApiResponse<string[]>> => {
@@ -153,6 +168,22 @@ export const fetchUserUpvotedRestaurantsApi = async (
     method: ApiType.GET,
   });
 };
+
+export const fetchUserRecommendatedResturantsApi = async (
+  userId: string
+): Promise<ApiResponse<string[]>> => {
+  return api<ApiResponse<string[]>>(`user/recommendations?userId=${userId}`, {
+    method: ApiType.GET,
+  });
+}
+
+export const fetchRoomRecommendatedResturantsApi = async (
+  roomId: string
+): Promise<ApiResponse<string[]>> => {
+  return api<ApiResponse<string[]>>(`room/recommendations?roomId=${roomId}`, {
+    method: ApiType.GET,
+  });
+}
 
 export const fetchRestaurantUpvotesApi = async (
   placeId: string

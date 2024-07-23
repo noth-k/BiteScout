@@ -11,6 +11,7 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
 import { AuthContextProvider } from "@/providers/AuthProvider";
 import * as Linking from "expo-linking";
+import { createResturantApi, updateGroupRecommendationsApi } from "@/app/api/api";
 
 interface Place {
   place_id: string;
@@ -20,9 +21,12 @@ interface Place {
   website: string;
 }
 
+
+
 const GrpRecommendations: React.FC = () => {
   const router = useRouter();
-  const { places } = useLocalSearchParams() as { places: string };
+  const { places, roomId } = useLocalSearchParams() as { places: string, roomId: string };
+  console.log(roomId);
   const parsedPlaces: Place[] = JSON.parse(places);
 
   useEffect(() => {
@@ -34,6 +38,30 @@ const GrpRecommendations: React.FC = () => {
       router.back();
     }
   }, [parsedPlaces, router]);
+
+  useEffect(() => {
+
+    const addEntry = async (name: string, placeId: string) => {
+      try {
+        const response = await createResturantApi(placeId, name);
+        console.log('Restaurant entry created:', response);
+      } catch (error) {
+        console.error('Error creating restaurant entry:', error);
+      }
+    };
+  
+    const updateGroupRecommendations = async (roomId: string, placeId: string) => {
+      try {
+        const response = await updateGroupRecommendationsApi(roomId, placeId);
+        console.log('Recommendation updated:', response);
+      } catch (error) {
+        console.error('Error updating recommendations:', error);
+      }
+    };
+  
+    addEntry(randomPlace.name, randomPlace.place_id);
+    updateGroupRecommendations(roomId, randomPlace.place_id);
+  }, [])
 
   const randomPlace =
     parsedPlaces[Math.floor(Math.random() * parsedPlaces.length)];
@@ -68,7 +96,7 @@ const GrpRecommendations: React.FC = () => {
               <Text style={styles.placeName}>{randomPlace.name}</Text>
               <Text style={styles.placeAddress}>{randomPlace.vicinity}</Text>
               <TouchableOpacity
-                style={[styles.button, styles.wideButton]} // Added wideButton style
+                style={styles.button}
                 onPress={() => handleOpenLink(randomPlace.googleMapsLink)}
               >
                 <Text style={styles.buttonText}>Open in Google Maps</Text>
@@ -149,11 +177,8 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginVertical: 13,
-    width: "80%",
+    width: 200,
     alignItems: "center",
-  },
-  wideButton: {
-    width: "90%", // Increased width for the wide button
   },
   buttonText: {
     color: "#fff",

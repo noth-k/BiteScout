@@ -184,4 +184,19 @@ const removeUser = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   }
-module.exports = { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice, fetchRestrictions};
+
+  const updateGroupRecommendations = async (req, res) => {
+    try {
+        const { roomId, placeId } = req.body;
+
+        const room = await Room.updateOne({_id: roomId}, {
+            $addToSet: {
+                recommendations: placeId,
+            }
+        } )
+        res.status(200).json({room});
+    } catch (error) {
+        res.json({error: error.message})
+    }
+}
+module.exports = { createRoom, fetchRoom, fetchRoomNames, updateRoom, removeUser, deleteRoom, updateSubmittedUsers, resetSubmittedUsers, fetchVibesAndPrice, fetchRestrictions, updateGroupRecommendations};

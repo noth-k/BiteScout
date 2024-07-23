@@ -22,7 +22,7 @@ const createRoom = () => {
     const [error, setError] = useState<string | null>(null);
     
     const usersId = selectedUsersState.map(user => user._id);
-    usersId.unshift(user?._id);
+    usersId.unshift(user?._id || "");
     const usersRestrictions = selectedUsersState.map(user => user.restrictions);
     usersRestrictions.unshift(user?.restrictions || "undefined");
 

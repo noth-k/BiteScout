@@ -156,12 +156,17 @@ const RestaurantsComponent = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-        <Text style={styles.title}>Search Restaurants</Text>
-        <TouchableOpacity onPress={handleReload}>
-          <FontAwesome name="refresh" style={styles.reloadIcon} />
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={navigateToLeaderboard}>
+        <Text style={styles.leaderboardText}>Leaderboard</Text>
+      </TouchableOpacity>
+      <Text style={styles.title}>Upvote Restaurants</Text>
+      <TouchableOpacity onPress={handleReload} style={styles.reloadIcon}>
+        <FontAwesome name="refresh" size={24} />
+      </TouchableOpacity>
+    </View>
       <View style={styles.container}>
+
+        <View style={styles.searchBar}>
         <TextInput
           style={styles.input}
           placeholder="Enter restaurant name"
@@ -178,7 +183,8 @@ const RestaurantsComponent = () => {
             <Text style={styles.searchButtonText}>Search</Text>
           )}
         </TouchableOpacity>
-
+        </View>
+        
         <FlatList
           data={restaurants}
           keyExtractor={(item) => item.id}
@@ -203,13 +209,6 @@ const RestaurantsComponent = () => {
             </View>
           )}
         />
-
-        <TouchableOpacity
-          style={styles.leaderboardButton}
-          onPress={navigateToLeaderboard}
-        >
-          <Text style={styles.leaderboardButtonText}>Leaderboard</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -229,27 +228,36 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-    paddingHorizontal: 20,
+    flexDirection: 'row',
+    width:'100%',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    backgroundColor: "white",
+  },
+  leaderboardText: {
+    fontFamily: "Inter",
+    fontSize:12,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    paddingTop: 10,
-    paddingLeft: 60,
+    flex: 6,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   reloadIcon: {
-    fontSize: 24,
-    color: colors.primary400,
-    paddingTop: 10,
+    flex: 1,
+    textAlign: 'right',
+    fontSize: 20,
   },
   container: {
     flex: 1,
     padding: 20,
     backgroundColor: "#fff",
+  },
+  searchBar: {
+    flexDirection:"row",
+    gap:5,
   },
   input: {
     height: 40,
@@ -258,12 +266,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 20,
     borderRadius: 5,
+    flex:7,
   },
   searchButton: {
     backgroundColor: colors.primary400,
     padding: 10,
     alignItems: "center",
     borderRadius: 5,
+    flex:2,
+    height:40,
   },
   searchButtonText: {
     color: "#fff",
@@ -286,6 +297,7 @@ const styles = StyleSheet.create({
   upvotes: {
     fontSize: 14,
     color: "#999",
+    marginBottom:10,
   },
   upvoteButton: {
     backgroundColor: colors.primary400,
@@ -293,6 +305,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
     alignItems: "center",
     borderRadius: 5,
+    height:40,
+    alignContent:'center',
+    justifyContent:'center',
   },
   upvotedButton: {
     backgroundColor: colors.primary700, // Change to a different color when upvoted

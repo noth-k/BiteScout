@@ -313,7 +313,10 @@ const GroupReco: React.FC<GroupRecoProps> = ({ roomId }) => {
 
       router.push({
         pathname: "/(tabs)/home/grprecommendations",
-        params: { places: JSON.stringify(finalFilteredPlaces) },
+        params: { 
+          places: JSON.stringify(finalFilteredPlaces),
+          roomId: roomId,
+         },
       });
     } catch (error) {
       console.error("Error fetching recommendations:", error);

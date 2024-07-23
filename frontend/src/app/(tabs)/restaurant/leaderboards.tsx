@@ -8,14 +8,17 @@ import {
   TouchableOpacity,
   ImageBackground,
   Linking,
+  ActivityIndicator,
 } from "react-native";
 import { fetchLeaderboardApi } from "@/app/api/api";
 import { Restaurant } from "@/types";
 import { useRouter } from "expo-router";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import colors from "@assets/colors";
 
 const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState<Restaurant[]>([]);
+  const [loading, setLoading] = useState<Boolean>(false)
   const router = useRouter();
 
   useEffect(() => {
@@ -24,6 +27,7 @@ const Leaderboard = () => {
 
   const fetchLeaderboard = async () => {
     try {
+      setLoading(true);
       const response = await fetchLeaderboardApi();
       if (response.success) {
         setLeaderboard(response.data || []);
@@ -32,6 +36,8 @@ const Leaderboard = () => {
       }
     } catch (error) {
       console.error("Failed to fetch leaderboard:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -53,11 +59,11 @@ const Leaderboard = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.titleContainer}>
-          <FontAwesome5 name="crown" style={styles.crown} />
+          <FontAwesome5 name="crown" style={styles.crown}/>
           <Text style={styles.title}>Leaderboards</Text>
-          <FontAwesome5 name="crown" style={styles.crown} />
+          <FontAwesome5 name="crown" style={styles.crown}/>
         </View>
-        <View style={styles.container}>
+        {loading ? (<ActivityIndicator size="small" color="white" />): (<View style={styles.container}>
           <FlatList
             data={leaderboard}
             keyExtractor={(item) => item.id}
@@ -70,7 +76,7 @@ const Leaderboard = () => {
               </View>
             )}
           />
-        </View>
+        </View>)}
       </SafeAreaView>
     </ImageBackground>
   );
@@ -105,7 +111,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 10,
-    backgroundColor: "red",
+    backgroundColor: colors.primary400,
   },
   crown: {
     fontSize: 24,

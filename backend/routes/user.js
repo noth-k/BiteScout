@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth, removeRoomFromUser, checkEmailPassword  } = require('../controllers/userController');
+const { loginUser, signupUser, updateUserDetails, searchUsers, updateRooms, fetchUserData, fetchUsers, requireAuth, removeRoomFromUser, checkEmailPassword, updatePastRecommendations  } = require('../controllers/userController');
 const User = require('../models/userModel');
 
 const router = express.Router();
@@ -47,5 +47,20 @@ router.get('/upvotedRestaurants', async (req, res) => {
       res.status(500).json({ success: false, error: error.message });
     }
   });
+
+  router.get('/recommendations', async (req, res) => {
+    try {
+      const { userId } = req.query;
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ success: false, error: 'User not found' });
+      }
+      res.status(200).json({ success: true, data: user.recommendations });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+router.post('/addRecommendation', updatePastRecommendations);
 
 module.exports = router;

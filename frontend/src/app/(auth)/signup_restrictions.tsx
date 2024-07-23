@@ -28,7 +28,9 @@ const signup_name = () => {
             preferences: preferences, 
             restrictions: restrictions,
             avatar: avatar,
-            rooms: []
+            rooms: [],
+            upvotedRestaurants: [],
+            recommendations:[],
 
         }
 
@@ -40,15 +42,7 @@ const signup_name = () => {
       router.push("../(tabs)/home/");
       console.log(json.user);
       authDispatch({ type: "LOGIN", payload: json.user });
-      // try {
-      //   await AsyncStorage.setItem("user", JSON.stringify(json.user));
-      // } catch (e) {
-      //   console.log(e);
-      // }
     }
-
-        //redirect to homepage if all is correct
-        
     }
 
     const handleBack = () => {
@@ -67,6 +61,7 @@ const signup_name = () => {
             />
         <Image source={restrictionsVector} style={styles.title} />
 
+        <View style={{padding: 20, }}>
         <Text style={styles.label}>Dietary Restrictions</Text>
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
@@ -101,6 +96,8 @@ const signup_name = () => {
               </View>
             </View>
           </Modal>
+        </View>
+        
         <Text 
         style={restrictions == "" ? styles.next : styles.nextSelected}
         onPress= {restrictions == "" ? () => {} : handleSubmit}

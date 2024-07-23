@@ -55,7 +55,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="restaurant"
         options={{
-          title: "Restaurants",
+          title: "Upvote",
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <FontAwesome

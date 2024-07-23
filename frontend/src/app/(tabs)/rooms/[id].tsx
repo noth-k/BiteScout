@@ -1,5 +1,7 @@
 import {
   ActivityIndicator,
+  Alert,
+  FlatList,
   ScrollView,
   StyleSheet,
   Touchable,
@@ -10,10 +12,12 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   fetchAllUsersApi,
+  fetchRestaurantDetailsById,
   fetchRoomApi,
+  fetchRoomRecommendatedResturantsApi,
   resetSubmittedUsersApi,
 } from "@/app/api/api";
-import { Room, User } from "@/types";
+import { Restaurant, Room, User } from "@/types";
 import colors from "@assets/colors";
 import { FontAwesome } from "@expo/vector-icons";
 import CircularProgress from "@/components/CircularProgress";
@@ -24,7 +28,7 @@ import Colors from "@/constants/Colors";
 
 
 const RoomScreen = () => {
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams() as {id: string};
   const { user } = useAuthContext();
   const router = useRouter();
   const [roomData, setRoomData] = useState<Room | null>(null);
@@ -37,6 +41,7 @@ const RoomScreen = () => {
   const waitingUsers = currUsers?.filter(
     (user: User) => !roomData?.submittedUsers.includes(user._id || "")
   );
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
 
   const handleSubmit = () => {
     router.push({
@@ -90,8 +95,47 @@ const RoomScreen = () => {
   useFocusEffect(
     useCallback(() => {
       fetchData();
+      fetchRecommendedRestaurants();
     }, [id])
   );
+
+  const fetchRecommendedRestaurants = async () => {
+    if (!user || !user._id) return;
+    try {
+        setLoading(true);
+        const response = await fetchRoomRecommendatedResturantsApi(id);
+        if (response.success) {
+            const restaurantDetails = await Promise.all(
+                (response.data || []).map((id) =>
+                    fetchRestaurantDetailsById(id)
+                        .then((res) => (res.success ? res.data : null))
+                        .catch((error) => {
+                            console.error(`Error fetching details for restaurant ${id}:`, error);
+                            return null;
+                        })
+                )
+            );
+
+            const validRestaurants = restaurantDetails.filter(
+                (res): res is Restaurant => res !== null
+            );
+
+            setRestaurants(validRestaurants);
+        } else {
+            Alert.alert(
+                "Error",
+                response.error || "Failed to fetch upvoted restaurants."
+            );
+        }
+    } catch (error) {
+        console.error("Failed to fetch upvoted restaurants:", error);
+        Alert.alert("Error", "Failed to fetch upvoted restaurants.");
+    } finally {
+        setLoading(false);
+    }
+};
+
+
 
   return (
     <View style={{ backgroundColor: "white", height: "100%" }}>
@@ -148,17 +192,25 @@ const RoomScreen = () => {
           </>
         )}
       </View>
-      <Text
-        style={{
-          fontFamily: "Inter",
-          margin: 20,
-          fontWeight: "bold",
-          color: "lightgrey",
-          textAlign: "center",
-        }}
-      >
-        Past Recommendations feature not included yet
-      </Text>
+
+      {restaurants.length === 0 ? (
+        <Text style={styles.default}>Recommendations will appear here</Text>
+      ) : (
+        <>
+          <Text style={styles.recomTitle}>Past Recommendations</Text>
+          <FlatList
+            data={restaurants}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.restaurantContainer}>
+                <Text style={styles.restaurantName}>{item.name}</Text>
+                <Text style={styles.restaurantVicinity}>{item.vicinity}</Text>
+              </View>
+            )}
+          />
+        </>
+      )}
+      
     </View>
   );
 };
@@ -263,4 +315,42 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     marginTop: 20,
   },
+  restaurantContainer: {
+    padding: 15,
+    borderWidth:1,
+    borderRadius:10,
+    borderColor:"lightgrey",
+    margin:10,
+    shadowColor: "black",
+    shadowOffset: {
+      width: -2,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+  },
+  restaurantName: {
+    fontSize: 18,
+    fontWeight: "400",
+  },
+  restaurantVicinity: {
+    fontSize: 16,
+    color: "#666",
+  },
+  recomTitle: {
+    fontFamily:"Inter",
+    fontSize:22, 
+    fontWeight:"bold",
+    marginTop:30,
+    marginBottom:20, 
+    textAlign:"center",
+  },
+  default: {
+    fontFamily:"Inter",
+    fontWeight: "bold",
+    textAlign:"center", 
+    fontSize:15, 
+    marginTop:30,
+    color:"lightgrey",
+  }
 });

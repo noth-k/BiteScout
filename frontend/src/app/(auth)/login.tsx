@@ -10,7 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { useEffect, useState } from "react";
-import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "@assets/colors";
 import { FontAwesome } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
@@ -18,13 +18,13 @@ import Button from "@/components/Button";
 import { LoginUser } from "@/types";
 import { loginApi } from "../api/api";
 import { useAuthContext } from "@/providers/AuthProvider";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import React from "react";
 // import { ScrollView } from "react-native-reanimated/lib/typescript/Animated";
 
 const loginVector = require("@assets/images/LoginVector.png");
 
-const login = () => {
+const Login = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -79,7 +79,7 @@ const login = () => {
   };
 
   return (
-    <SafeAreaProvider>
+    // <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -101,16 +101,18 @@ const login = () => {
                 onChangeText={(text) => setEmail(text.toLowerCase())}
                 placeholder="jon@gmail.com"
                 style={styles.inputContainer}
+                testID={'username'}
               />
 
               <Text style={styles.label}>Password</Text>
 
-              <View style={styles.inputContainer}>
+              <View style={[styles.inputContainer, {marginBottom:20}]}>
                 <TextInput
                   value={password}
                   onChangeText={setPassword}
                   style={{ flex: 1 }}
                   secureTextEntry={secureTextEntry}
+                  testID={'secure-pw'}
                 />
                 <TouchableOpacity
                   onPress={() => setSecureTextEntry(!secureTextEntry)}
@@ -120,10 +122,6 @@ const login = () => {
                   </Text>
                 </TouchableOpacity>
               </View>
-
-              <TouchableOpacity onPress={handlePress}>
-                <Text style={styles.changePassword}>Forget your password?</Text>
-              </TouchableOpacity>
 
               <Button text="Log In" onPress={handleLogin} />
               {error != "noError" && (
@@ -137,11 +135,11 @@ const login = () => {
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </SafeAreaProvider>
+    // </SafeAreaProvider>
   );
 };
 
-export default login;
+export default Login;
 
 const styles = StyleSheet.create({
   back: {
