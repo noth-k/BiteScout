@@ -26,10 +26,13 @@ const profile = () => {
     email: user?.email || 'error ',
     name: name,
     password: user?.password || 'error',
+    avatar: user?.avatar,
     preferences: preferences,
     restrictions: restrictions,
     _id: user?._id || 'error',
     rooms: user?.rooms || [],
+    recommendations: user?.recommendations || [],
+    upvotedRestaurants: user?.upvotedRestaurants || [],
   };
 
   const handleSubmit = async () => {

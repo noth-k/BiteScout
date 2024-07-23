@@ -40,6 +40,11 @@ const userSchema = new Schema({
     type: [String], 
     default: [],
   },
+  recommendations: {
+    type: [String],
+    ref: "Resturant",
+    default: [],
+  }
 });
 
 //static check email and password method

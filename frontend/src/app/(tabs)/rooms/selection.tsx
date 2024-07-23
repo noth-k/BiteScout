@@ -10,6 +10,26 @@ import { useAuthContext } from '@/providers/AuthProvider';
 
 const displayVector = require("@assets/images/displayImage.png");
 
+const avatarImages: { [key: string]: any } = {
+  man_1: require('@assets/images/man_1.png'),
+  man_2: require('@assets/images/man_2.png'),
+  man_3: require('@assets/images/man_3.png'),
+  man_4: require('@assets/images/man_4.png'),
+  man_5: require('@assets/images/man_5.png'),
+  man_6: require('@assets/images/man_6.png'),
+  man_7: require('@assets/images/man_7.png'),
+  man_8: require('@assets/images/man_8.png'),
+  woman_1: require('@assets/images/woman_1.png'),
+  woman_2: require('@assets/images/woman_2.png'),
+  woman_3: require('@assets/images/woman_3.png'),
+  woman_4: require('@assets/images/woman_4.png'),
+  woman_5: require('@assets/images/woman_5.png'),
+  woman_6: require('@assets/images/woman_6.png'),
+  woman_7: require('@assets/images/woman_7.png'),
+  woman_8: require('@assets/images/woman_8.png'),
+};
+
+
 type Vibe = {
   name: string;
 };
@@ -37,6 +57,7 @@ const selection = () => {
     const { user } = useAuthContext();
     const parsedRoomData = JSON.parse(typeof roomData === 'string' ? roomData : '[]');
     const [selectedVibe, setSelectedVibe] = useState<string>('');
+    const avatarSource = avatarImages[user?.avatar || 'man_1'];
     const [priceRangeIndex, setPriceRangeIndex] = useState<number>(0);
     const router = useRouter();
 
@@ -65,6 +86,7 @@ const selection = () => {
         style={{color:'white', fontSize:30, marginTop:'auto', marginLeft:20,}}/>
 
         <Image source={displayVector} style={styles.title}/>
+        <Image source={avatarSource} style={styles.avatar} resizeMode="contain"/>
       </View>
       <View style={{ margin: 15 }}>
         <Text style={styles.label}>SELECT VIBE</Text>
@@ -160,5 +182,13 @@ const styles = StyleSheet.create({
     fontFamily:'Inter',
     fontSize:15, 
     textAlign:'center',
-  }
+  },
+  avatar: {
+    width: 140,
+    height: 140,
+    borderRadius: 40,
+    position: "absolute",
+    top: 170,
+    right: 215,
+  },
 });

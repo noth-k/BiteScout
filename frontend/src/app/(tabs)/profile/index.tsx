@@ -99,12 +99,12 @@ const index = () => {
           title={"Restrictions"}
         />
 
-        <TouchableOpacity
-          style={styles.upvotedRestaurantsButton}
-          onPress={() => router.push("/profile/upvotedRestaurant")}
-        >
-          <Text style={styles.upvotedRestaurantsText}>Upvoted Restaurants</Text>
+        <TouchableOpacity >
+        <Text style={{ margin: "5%", textAlign: "center", fontFamily:"Inter" }} onPress={() => {
+          router.push("/profile/history");
+        }}> History </Text>
         </TouchableOpacity>
+        
 
         <Text
           onPress={() => {
@@ -112,7 +112,7 @@ const index = () => {
             router.push("/");
             logout();
           }}
-          style={{ margin: "5%", textAlign: "center", color: "red" }}
+          style={{ margin: "5%", textAlign: "center", color: "red", fontFamily:"Inter"}}
         >
           Log out
         </Text>

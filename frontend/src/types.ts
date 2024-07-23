@@ -10,8 +10,10 @@ export interface User extends LoginUser{
     preferences: string[],
     restrictions: string,
     avatar?: string,
-    _id:string,
-    rooms:string[]
+    _id?:string,
+    rooms:string[],
+    recommendations: string[],
+    upvotedRestaurants: string[],
 }
 
 export interface Room {

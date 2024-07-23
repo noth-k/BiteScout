@@ -9,9 +9,9 @@ import {
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import { AuthContextProvider } from "@/providers/AuthProvider";
+import { AuthContextProvider, useAuthContext } from "@/providers/AuthProvider";
 import * as Linking from "expo-linking";
-import { fetchRestaurantUpvotesApi } from "@/app/api/api";
+import { fetchRestaurantUpvotesApi, createResturantApi, updateRecommendationsApi } from "@/app/api/api";
 
 interface Place {
   place_id: string;
@@ -24,6 +24,8 @@ interface Place {
 
 const Recommendations: React.FC = () => {
   const router = useRouter();
+  const { user } = useAuthContext();
+  console.log(user?._id);
   const { places } = useLocalSearchParams() as { places: string };
   const parsedPlaces: Place[] = JSON.parse(places);
 
@@ -36,6 +38,43 @@ const Recommendations: React.FC = () => {
       router.back();
     }
   }, [parsedPlaces, router]);
+
+  useEffect(() => {
+
+    const performOperations = async () => {
+      try {
+        // First, add the entry
+        const entryResponse = await addEntry(randomPlace.name, randomPlace.place_id);
+        console.log('Restaurant entry created:', entryResponse);
+
+        // Then, update the recommendations
+        const recommendationsResponse = await updateRecommendations(user?._id, randomPlace.place_id);
+        console.log('Recommendation updated:', recommendationsResponse);
+      } catch (error) {
+        console.error('Error in operations:', error);
+      }
+    };
+
+    performOperations();
+  }, []);
+
+  const addEntry = async (name:string, placeId:string) => {
+    try {
+      const response = await createResturantApi(placeId, name);
+      return response;
+    } catch (error) {
+      console.error('Error creating restaurant entry:', error)
+    }
+  };
+
+  const updateRecommendations = async (userId:string, placeId:string) => {
+    try {
+      const response = await updateRecommendationsApi(userId, placeId);
+      return response;
+    } catch (error) {
+      console.error('Error updating restaurant:', error)
+    }
+  };
 
   const handleOpenLink = (url: string) => {
     if (url && url.startsWith("http")) {
@@ -118,13 +157,14 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   back: {
-    fontSize: 24,
+    fontSize: 30,
     paddingTop: 40,
     paddingHorizontal: 10,
     position: "absolute",
     top: 20,
     left: 10,
-    color: "#fff",
+    color: "white",
+    fontWeight:"bold",
   },
   recommendationContainer: {
     alignItems: "center",
@@ -167,7 +207,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     marginVertical: 13,
-    width: "90%",
+    width: 200,
     alignItems: "center",
   },
   buttonText: {

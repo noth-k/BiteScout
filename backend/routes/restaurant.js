@@ -129,4 +129,32 @@ router.get('/details/:id', async (req, res) => {
   }
 });
 
+router.post('/create', async (req, res) => {
+  try {
+    const { id, name } = req.body;
+
+    if (!id || !name) {
+      return res.status(400).json({ success: false, error: 'ID and Name are required' });
+    }
+
+    const existingRestaurant = await Restaurant.findOne({ id });
+    if (existingRestaurant) {
+      return res.status(200).json({ success: true, data: existingRestaurant});
+    }
+
+    const newRestaurant = new Restaurant({
+      id,
+      name,
+      upvotes: 0,
+      upvotedBy: [],
+    });
+
+    const savedRestaurant = await newRestaurant.save();
+    res.status(201).json({ success: true, data: savedRestaurant });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+
 module.exports = router;
