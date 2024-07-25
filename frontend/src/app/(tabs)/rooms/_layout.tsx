@@ -13,6 +13,7 @@ export default function RoomLayout() {
         <Stack.Screen name='settings' options={{headerShown: false}} />
         <Stack.Screen name='selection' options={{headerShown: false}} />
         <Stack.Screen name="invite" options={{headerShown:false}}/>
+        <Stack.Screen name="grprecommendations" options={{headerShown: false}} />
     </Stack>
   )
 }

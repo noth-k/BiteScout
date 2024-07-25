@@ -58,9 +58,10 @@ const GrpRecommendations: React.FC = () => {
         console.error('Error updating recommendations:', error);
       }
     };
-  
-    addEntry(randomPlace.name, randomPlace.place_id);
-    updateGroupRecommendations(roomId, randomPlace.place_id);
+    if (randomPlace) {
+      addEntry(randomPlace.name, randomPlace.place_id);
+      updateGroupRecommendations(roomId, randomPlace.place_id);
+    }
   }, [])
 
   const randomPlace =

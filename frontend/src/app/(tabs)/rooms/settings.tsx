@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, Share } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Share, Alert } from 'react-native';
 import React, { useEffect, useState, useCallback } from 'react';
 import colors from '@assets/colors';
 import { FontAwesome } from '@expo/vector-icons';
@@ -7,7 +7,7 @@ import MemberListItem from '@/components/MemberListItem';
 import { Room, User } from '@/types';
 import { useAuthContext } from '@/providers/AuthProvider';
 import MemberAddIconComponent from '@/components/MemberAddIconComponent';
-import { deleteRoomApi, fetchRoomApi, fetchUserDataApi, removeUserApi, removeRoomFromUserApi } from '@/app/api/api';
+import { deleteRoomApi, fetchRoomApi, fetchUserDataApi, removeUserApi, removeRoomFromUserApi, resetSubmittedUsersApi } from '@/app/api/api';
 import { useFocusEffect } from '@react-navigation/native';
 
 const Settings = () => {
@@ -38,6 +38,15 @@ const Settings = () => {
       }
     } catch (error) {
       console.error('Error fetching data:', error);
+    }
+  };
+
+  const handleReset = async () => {
+    try {
+      await resetSubmittedUsersApi(parsedRoomData?._id || "");
+    } catch (error) {
+      console.error("Error resetting room:", error);
+      Alert.alert("Error", "Failed to reset the room.");
     }
   };
 
@@ -137,6 +146,7 @@ const Settings = () => {
           />
         ))}
         <Text style={styles.label} onPress= {handleShareInvite}> Share Invite</Text>
+        <Text style={styles.label} onPress={handleReset}>Reset Inputs</Text>
         <Text style={styles.label} onPress={() => handleRemove(authUser?._id || "")}>Leave Room</Text>
         <Text style={styles.label} onPress={handleDelete}>Delete Room</Text>
       </ScrollView>
