@@ -312,7 +312,7 @@ const GroupReco: React.FC<GroupRecoProps> = ({ roomId }) => {
       );
 
       router.push({
-        pathname: "/(tabs)/home/grprecommendations",
+        pathname: "/(tabs)/rooms/grprecommendations",
         params: { 
           places: JSON.stringify(finalFilteredPlaces),
           roomId: roomId,

@@ -7,7 +7,7 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "jest --watchAll"
+    "test": "node --no-warnings --experimental-vm-modules $( [ -f ./node_modules/.bin/jest ] && echo ./node_modules/.bin/jest || which jest )"
   },
   "jest": {
     "preset": "jest-expo",
@@ -22,7 +22,7 @@
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
       "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
     },
-    "setupFiles": ["./frontend/__tests__/jestSetupFile.js"]
+    "setupFiles": ["<rootDir>/__tests__/jestSetupFile.js"]
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",

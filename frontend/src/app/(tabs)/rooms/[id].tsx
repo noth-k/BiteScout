@@ -2,9 +2,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
-  ScrollView,
   StyleSheet,
-  Touchable,
   TouchableOpacity,
 } from "react-native";
 import { Text, View } from "@/components/Themed";
@@ -24,24 +22,23 @@ import CircularProgress from "@/components/CircularProgress";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useFocusEffect } from "@react-navigation/native";
 import GroupReco from "@/components/GroupReco";
-import Colors from "@/constants/Colors";
-
 
 const RoomScreen = () => {
-  const { id } = useLocalSearchParams() as {id: string};
+  const { id } = useLocalSearchParams() as { id: string };
   const { user } = useAuthContext();
   const router = useRouter();
   const [roomData, setRoomData] = useState<Room | null>(null);
   const [users, setUsers] = useState<User[] | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
+
   const currUsers = users?.filter((user: User) =>
     roomData?.users.includes(user._id)
   );
   const waitingUsers = currUsers?.filter(
     (user: User) => !roomData?.submittedUsers.includes(user._id || "")
   );
-  const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
 
   const handleSubmit = () => {
     router.push({
@@ -70,7 +67,13 @@ const RoomScreen = () => {
   };
 
   const handleReset = async () => {
-    await resetSubmittedUsersApi(roomData?._id || "");
+    try {
+      await resetSubmittedUsersApi(roomData?._id || "");
+      fetchData(); // Fetch updated data to trigger rerender
+    } catch (error) {
+      console.error("Error resetting room:", error);
+      Alert.alert("Error", "Failed to reset the room.");
+    }
   };
 
   const fetchData = async () => {
@@ -102,46 +105,44 @@ const RoomScreen = () => {
   const fetchRecommendedRestaurants = async () => {
     if (!user || !user._id) return;
     try {
-        setLoading(true);
-        const response = await fetchRoomRecommendatedResturantsApi(id);
-        if (response.success) {
-            const restaurantDetails = await Promise.all(
-                (response.data || []).map((id) =>
-                    fetchRestaurantDetailsById(id)
-                        .then((res) => (res.success ? res.data : null))
-                        .catch((error) => {
-                            console.error(`Error fetching details for restaurant ${id}:`, error);
-                            return null;
-                        })
-                )
-            );
+      setLoading(true);
+      const response = await fetchRoomRecommendatedResturantsApi(id);
+      if (response.success) {
+        const restaurantDetails = await Promise.all(
+          (response.data || []).map((id) =>
+            fetchRestaurantDetailsById(id)
+              .then((res) => (res.success ? res.data : null))
+              .catch((error) => {
+                console.error(`Error fetching details for restaurant ${id}:`, error);
+                return null;
+              })
+          )
+        );
 
-            const validRestaurants = restaurantDetails.filter(
-                (res): res is Restaurant => res !== null
-            );
+        const validRestaurants = restaurantDetails.filter(
+          (res): res is Restaurant => res !== null
+        );
 
-            setRestaurants(validRestaurants);
-        } else {
-            Alert.alert(
-                "Error",
-                response.error || "Failed to fetch upvoted restaurants."
-            );
-        }
+        setRestaurants(validRestaurants);
+      } else {
+        Alert.alert(
+          "Error",
+          response.error || "Failed to fetch upvoted restaurants."
+        );
+      }
     } catch (error) {
-        console.error("Failed to fetch upvoted restaurants:", error);
-        Alert.alert("Error", "Failed to fetch upvoted restaurants.");
+      console.error("Failed to fetch upvoted restaurants:", error);
+      Alert.alert("Error", "Failed to fetch upvoted restaurants.");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
-
-
+  };
 
   return (
     <View style={{ backgroundColor: "white", height: "100%" }}>
       <View style={styles.header}>
         {loading ? (
-          <ActivityIndicator size="small" color="white" style={{marginTop: "50%"}}/>
+          <ActivityIndicator size="small" color="white" style={{ marginTop: "50%" }} />
         ) : (
           <>
             <View style={styles.title}>
@@ -210,7 +211,6 @@ const RoomScreen = () => {
           />
         </>
       )}
-      
     </View>
   );
 };
@@ -317,10 +317,10 @@ const styles = StyleSheet.create({
   },
   restaurantContainer: {
     padding: 15,
-    borderWidth:1,
-    borderRadius:10,
-    borderColor:"lightgrey",
-    margin:10,
+    borderWidth: 1,
+    borderRadius: 10,
+    borderColor: "lightgrey",
+    margin: 10,
     shadowColor: "black",
     shadowOffset: {
       width: -2,
@@ -338,19 +338,19 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   recomTitle: {
-    fontFamily:"Inter",
-    fontSize:22, 
-    fontWeight:"bold",
-    marginTop:30,
-    marginBottom:20, 
-    textAlign:"center",
+    fontFamily: "Inter",
+    fontSize: 22,
+    fontWeight: "bold",
+    marginTop: 30,
+    marginBottom: 20,
+    textAlign: "center",
   },
   default: {
-    fontFamily:"Inter",
+    fontFamily: "Inter",
     fontWeight: "bold",
-    textAlign:"center", 
-    fontSize:15, 
-    marginTop:30,
-    color:"lightgrey",
-  }
+    textAlign: "center",
+    fontSize: 15,
+    marginTop: 30,
+    color: "lightgrey",
+  },
 });
