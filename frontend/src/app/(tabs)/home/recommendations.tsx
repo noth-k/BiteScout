@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -25,9 +25,19 @@ interface Place {
 const Recommendations: React.FC = () => {
   const router = useRouter();
   const { user } = useAuthContext();
-  console.log(user?._id);
   const { places } = useLocalSearchParams() as { places: string };
   const parsedPlaces: Place[] = JSON.parse(places);
+  const [isUserLoaded, setIsUserLoaded] = useState(false);
+  const [name, setName] = useState("");
+  const [vicinity, setVicinity] = useState("");
+  const [googleMapsLink, setGoogleMapsLink] = useState("");
+  const [webLink, setWebLink] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setIsUserLoaded(true);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (parsedPlaces.length === 0) {
@@ -40,23 +50,36 @@ const Recommendations: React.FC = () => {
   }, [parsedPlaces, router]);
 
   useEffect(() => {
-
     const performOperations = async () => {
+      if (!user || !user._id) {
+        console.error("User or user ID is not available");
+        return;
+      }
+
       try {
+        const randomPlace = getWeightedRandomPlace(parsedPlaces);
+
+        setName(randomPlace.name);
+        setVicinity(randomPlace.vicinity);
+        setGoogleMapsLink(randomPlace.googleMapsLink);
+        setWebLink(randomPlace.website);
+        
         // First, add the entry
         const entryResponse = await addEntry(randomPlace.name, randomPlace.place_id);
         console.log('Restaurant entry created:', entryResponse);
 
         // Then, update the recommendations
-        const recommendationsResponse = await updateRecommendations(user?._id, randomPlace.place_id);
+        const recommendationsResponse = await updateRecommendations(user._id, randomPlace.place_id);
         console.log('Recommendation updated:', recommendationsResponse);
       } catch (error) {
         console.error('Error in operations:', error);
       }
     };
 
-    performOperations();
-  }, []);
+    if (isUserLoaded && parsedPlaces.length > 0) {
+      performOperations();
+    }
+  }, [isUserLoaded]);
 
   const addEntry = async (name:string, placeId:string) => {
     try {
@@ -122,17 +145,17 @@ const Recommendations: React.FC = () => {
               We recommend you try the following restaurant!
             </Text>
             <View style={styles.placeItem}>
-              <Text style={styles.placeName}>{randomPlace.name}</Text>
-              <Text style={styles.placeAddress}>{randomPlace.vicinity}</Text>
+              <Text style={styles.placeName}>{name}</Text>
+              <Text style={styles.placeAddress}>{vicinity}</Text>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => handleOpenLink(randomPlace.googleMapsLink)}
+                onPress={() => handleOpenLink(googleMapsLink)}
               >
                 <Text style={styles.buttonText}>Open in Google Maps</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => handleOpenLink(randomPlace.website)}
+                onPress={() => handleOpenLink(webLink)}
               >
                 <Text style={styles.buttonText}>Visit Website</Text>
               </TouchableOpacity>

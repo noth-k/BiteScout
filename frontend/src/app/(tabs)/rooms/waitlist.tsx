@@ -10,7 +10,7 @@ const WaitlistScreen = () => {
   console.log(parsedWaitingListUsers);
 
   return (
-    <View>
+    <View style={{backgroundColor:"white", height:"100%"}}>
       {parsedWaitingListUsers.map((user: User) => (
         <MemberListItem user={user} key={user._id}/>
       ))}

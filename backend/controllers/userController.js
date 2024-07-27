@@ -166,12 +166,12 @@ const updatePastRecommendations = async (req, res) => {
     try {
         const { userId, placeId } = req.body;
 
-        const user = await User.updateOne({_id: userId}, {
+        const data = await User.updateOne({_id: userId}, {
             $addToSet: {
                 recommendations: placeId,
             }
         } )
-        res.status(200).json({user});
+        res.status(200).json({data});
     } catch (error) {
         res.json({error: error.message})
     }

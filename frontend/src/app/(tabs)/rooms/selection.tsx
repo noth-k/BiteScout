@@ -78,7 +78,7 @@ const selection = () => {
 
 
   return (
-    <View>
+    <View style={{height:'100%', backgroundColor:"white"}}>
       <View style={styles.display}>
       <FontAwesome
         name={"angle-left"}

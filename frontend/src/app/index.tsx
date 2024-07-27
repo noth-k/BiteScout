@@ -40,7 +40,7 @@ const index = () => {
               text="Sign Up"
               textStyle={{ color: colors.primary800 }}
               buttonStyle={styles.signUp}
-              onPress={() => router.push("/(auth)/signup_name")}
+              onPress={() => router.push("/(auth)/SignUpName")}
             />
           </View>
         </SafeAreaView>

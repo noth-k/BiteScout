@@ -11,14 +11,15 @@ import { FontAwesome } from "@expo/vector-icons";
 import RoomListItem from "@components/RoomListItem";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { useRouter } from "expo-router";
-import { fetchRoomNames } from "../../api/api";
-import { Room } from "@/types";
+import { fetchRoomNames, fetchUserDataApi } from "../../api/api";
+import { Room, User } from "@/types";
 import EmptyRooms from "@/components/EmptyRooms";
 
 export default function TabTwoScreen() {
   const router = useRouter();
   const { user } = useAuthContext();
-  const roomIds = user?.rooms || ["test"];
+  const [userData, setUserData] = useState<User>();
+  const roomIds = userData?.rooms || ["test"];
   const [names, setNames] = useState<Room[]>([]);
   const displayedNames = names.filter((item) =>
     roomIds.includes(item._id || "error")
@@ -30,9 +31,21 @@ export default function TabTwoScreen() {
       const json: any = await fetchRoomNames();
       const roomData: Room[] = json.rooms;
       setNames(roomData);
+      console.log(roomData)
     };
     getRoomNames();
   }, [roomIds]);
+
+  useEffect(() => {
+    const getUserData = async () => {
+      if (user && user._id) {
+        const fetchedUserData:any = await fetchUserDataApi(user._id);
+        setUserData(fetchedUserData.user);
+      }
+    };
+
+    getUserData();
+  }, [user]);
 
   //filter using the ids that are in roomsId
   // displayedNames = names.filter((item) =>
@@ -50,7 +63,7 @@ export default function TabTwoScreen() {
           style={styles.create}
           onPress={() => router.push("/rooms/create/")}
         >
-          <FontAwesome name="plus" style={{ fontSize: 18, color: "white" }} />
+          <FontAwesome name="plus" style={{ fontSize: 18, color: "white" }} testID="add-room-test"/>
         </TouchableOpacity>
       </View>
 

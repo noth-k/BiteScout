@@ -22,6 +22,7 @@ import { useRouter } from "expo-router";
 import { useAuthContext } from "@/providers/AuthProvider";
 import { UpvoteProvider, useUpvoteContext } from "@/providers/UpvoteProvider"; // Import the context
 import { FontAwesome } from "@expo/vector-icons"; // Import FontAwesome for the reload icon
+import Leaderboard from "./leaderboards";
 
 const RestaurantsComponent = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -104,7 +105,7 @@ const RestaurantsComponent = () => {
       const restaurant = restaurants.find((r) => r.id === id);
       if (!restaurant) return;
 
-      const response = await upvoteRestaurantApi(id, name, user._id);
+      const response = await upvoteRestaurantApi(id, name, user._id || "");
       console.log("Upvote restaurant response:", response);
       if (response.success) {
         toggleUpvote(id); // Toggle the upvote state in the context
@@ -156,7 +157,7 @@ const RestaurantsComponent = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-      <TouchableOpacity onPress={navigateToLeaderboard}>
+      <TouchableOpacity onPress={navigateToLeaderboard} style={styles.leaderboardBox}>
         <Text style={styles.leaderboardText}>Leaderboard</Text>
       </TouchableOpacity>
       <Text style={styles.title}>Upvote Restaurants</Text>
@@ -238,9 +239,10 @@ const styles = StyleSheet.create({
   leaderboardText: {
     fontFamily: "Inter",
     fontSize:12,
+    color:"white",
   },
   title: {
-    flex: 6,
+    flex: 4,
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold',
@@ -249,6 +251,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'right',
     fontSize: 20,
+    marginLeft:10,
   },
   container: {
     flex: 1,
@@ -323,8 +326,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 20,
   },
-  leaderboardButtonText: {
-    color: "#fff",
-    fontSize: 16,
-  },
+  leaderboardBox: {
+    backgroundColor:colors.primary400,
+    borderRadius:10, 
+    padding:10, 
+  }
 });

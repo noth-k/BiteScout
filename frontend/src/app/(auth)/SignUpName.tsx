@@ -8,7 +8,7 @@ import { useSignUpContext } from '@/providers/SignUpProvider';
 
 const nameVector = require("@assets/images/name.jpg");
 
-const signup_name = () => {
+const SignUpName = () => {
     const router = useRouter();
     const [name, setName] = useState("");
     const { dispatch } = useSignUpContext();
@@ -20,7 +20,7 @@ const signup_name = () => {
             payload: name,
         })
         //router to next page
-        router.push("./signup_email");
+        router.push("./signUpEmail");
     }
 
     const handleBack = () => {
@@ -36,6 +36,7 @@ const signup_name = () => {
               name="angle-left"
               style={styles.back}
               onPress={handleBack}
+              testID='back-button'
             />
         <Image source={nameVector} style={styles.title} />
         <InputField
@@ -52,7 +53,7 @@ const signup_name = () => {
   )
 }
 
-export default signup_name;
+export default SignUpName;
 
 const styles = StyleSheet.create({
     back: {

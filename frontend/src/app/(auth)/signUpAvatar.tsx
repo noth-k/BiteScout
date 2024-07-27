@@ -9,7 +9,7 @@ import AvatarListItem from '@/components/AvatarListItem';
 
 const avatarVector = require("@assets/images/avatar.png");
 
-const signup_name = () => {
+const SignUpAvatar = () => {
     const router = useRouter();
     const [avatar, setAvatar] = useState("");
     const { dispatch } = useSignUpContext();
@@ -21,7 +21,7 @@ const signup_name = () => {
             payload: avatar,
         })
         //router to next page
-        router.push("./signup_preferences");
+        router.push("./signUpPreferences");
     }
 
     const handleBack = () => {
@@ -67,7 +67,7 @@ const signup_name = () => {
   )
 }
 
-export default signup_name;
+export default SignUpAvatar;
 
 const styles = StyleSheet.create({
     back: {
