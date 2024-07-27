@@ -11,18 +11,16 @@
   },
   "jest": {
     "preset": "jest-expo",
-    "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|@react-native(-community)?|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|ky)"
-    ],
     "transform": {
       "^.+\\.js$": "babel-jest",
       "^.+\\.tsx?$": "ts-jest"
     },
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js",
+      "^src/app/api/apiCall$": "<rootDir>/__mocks__/apiCall.ts"
     },
-    "setupFiles": ["<rootDir>/__tests__/jestSetupFile.js"]
+    "setupFiles": ["./jest.setup.js"]
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
@@ -49,6 +47,7 @@
     "expo-updates": "~0.25.16",
     "expo-web-browser": "~13.0.3",
     "ky": "^1.2.4",
+    "ky-universal": "^0.12.0",
     "natural": "^7.1.0",
     "porter-stemmer": "^0.9.1",
     "react": "18.2.0",

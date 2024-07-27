@@ -5,11 +5,11 @@ export default function AuthLayout() {
   return (
     <Stack>
       <Stack.Screen name="login" options={{ headerShown: false }} />
-      <Stack.Screen name="signup_name" options={{ headerShown: false }} />
-      <Stack.Screen name="signup_avatar" options={{ headerShown: false }} />
-      <Stack.Screen name="signup_email" options={{ headerShown: false }} />
-      <Stack.Screen name="signup_preferences" options={{ headerShown: false }} />
-      <Stack.Screen name="signup_restrictions" options={{ headerShown: false }} />
+      <Stack.Screen name="SignUpName" options={{ headerShown: false }} />
+      <Stack.Screen name="signUpAvatar" options={{ headerShown: false }} />
+      <Stack.Screen name="signUpEmail" options={{ headerShown: false }} />
+      <Stack.Screen name="signUpPreferences" options={{ headerShown: false }} />
+      <Stack.Screen name="signUpRestrictions" options={{ headerShown: false }} />
     </Stack>
   );
 }

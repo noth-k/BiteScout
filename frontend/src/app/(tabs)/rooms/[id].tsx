@@ -156,6 +156,7 @@ const RoomScreen = () => {
                 name="cog"
                 style={styles.settings}
                 onPress={handleSettings}
+                testID="test-settings"
               />
             </View>
             <View style={styles.roomDetails}>
@@ -328,14 +329,16 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.5,
     shadowRadius: 3,
+    backgroundColor:"white",
   },
   restaurantName: {
     fontSize: 18,
     fontWeight: "400",
+    color: "black",
   },
   restaurantVicinity: {
     fontSize: 16,
-    color: "#666",
+    color: "black",
   },
   recomTitle: {
     fontFamily: "Inter",
@@ -344,6 +347,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 20,
     textAlign: "center",
+    color:"black",
   },
   default: {
     fontFamily: "Inter",

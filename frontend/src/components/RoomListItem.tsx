@@ -10,7 +10,7 @@ type RoomListItemProps = {
 const RoomListItem = ({ label, id }: RoomListItemProps) => {
     const router = useRouter();
     return (
-        <TouchableOpacity style={styles.container} onPress={() => router.push(`/(tabs)/rooms/${id}`)}>
+        <TouchableOpacity style={styles.container} onPress={() => router.push(`/(tabs)/rooms/${id}`)} testID={`test-room-${label}`}>
             <Text style={styles.title}>{label}</Text>
         </TouchableOpacity>
     )

@@ -43,7 +43,7 @@ const SignupPreferences: React.FC = () => {
         type: "ADD_PREFERENCES",
         payload: topPreferences,
       });
-      router.push("./signup_restrictions");
+      router.push("./signUpRestrictions");
     }
   }, [selections]);
 
@@ -105,15 +105,16 @@ const SignupPreferences: React.FC = () => {
         name="angle-left"
         style={styles.back}
         onPress={handleBack}
+        testID='back-button'
       />
       <Image source={preferencesVector} style={styles.title} />
       <Text style={{fontFamily:"Inter", textAlign:"center", fontSize:15}}>{'Which cuisine would you rather: \n Dish or Ditch'}</Text>
       <View style={styles.imageContainer}>
-        <TouchableOpacity onPress={() => handleSelection(currentPair[0])}>
+        <TouchableOpacity onPress={() => handleSelection(currentPair[0])} testID='vinoth_greatest_1'>
           <Image source={cuisines[currentPair[0]].image} style={styles.image} />
         </TouchableOpacity>
         <Text style={styles.orText}>or</Text>
-        <TouchableOpacity onPress={() => handleSelection(currentPair[1])}>
+        <TouchableOpacity onPress={() => handleSelection(currentPair[1])} testID='vinoth_greatest_2'>
           <Image source={cuisines[currentPair[1]].image} style={styles.image} />
         </TouchableOpacity>
       </View>

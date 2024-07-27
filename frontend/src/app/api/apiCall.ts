@@ -30,7 +30,7 @@ const customKy = ky.create({
 
 export const api = async <T>(url: string, apiCall?: ApiCall): Promise<T> => {
     try {
-        const json = await customKy(`http://localhost:4000/api/${url}`, {
+        const json = await customKy(`http://54.252.240.132:4000/api/${url}`, {
             method: apiCall?.method || ApiType.GET,
             json: apiCall?.body
         }).json<T>();

@@ -9,7 +9,7 @@ import { checkEmailPasswordApi } from '../api/api';
 
 const emailVector = require("@assets/images/email.png");
 
-const signup_name = () => {
+const signUpEmail = () => {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -31,7 +31,7 @@ const signup_name = () => {
                 payload: {email, password},
             })
             //router to next page
-            router.push("./signup_avatar");
+            router.push("./signUpAvatar");
         }
 
         // //dispatch
@@ -57,6 +57,7 @@ const signup_name = () => {
               name="angle-left"
               style={styles.back}
               onPress={handleBack}
+              testID='back-button'
             />
         <Image source={emailVector} style={styles.title} />
         <InputField
@@ -93,7 +94,7 @@ const signup_name = () => {
   )
 }
 
-export default signup_name;
+export default signUpEmail;
 
 const styles = StyleSheet.create({
     back: {

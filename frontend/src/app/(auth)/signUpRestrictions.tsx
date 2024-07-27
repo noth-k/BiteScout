@@ -12,7 +12,7 @@ import { User } from '@/types';
 
 const restrictionsVector = require("@assets/images/restrictions.png");
 
-const signup_name = () => {
+const SignUpRestrictions = () => {
     const router = useRouter();
     const { user, dispatch: authDispatch} = useAuthContext();
     const [restrictions, setRestrictions] = useState("");
@@ -58,6 +58,7 @@ const signup_name = () => {
               name="angle-left"
               style={styles.back}
               onPress={handleBack}
+              testID='back-button'
             />
         <Image source={restrictionsVector} style={styles.title} />
 
@@ -66,6 +67,7 @@ const signup_name = () => {
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
             style={styles.inputContainer}
+            testID='open-diet-restrictions-model'
           >
             <Text>{restrictions}</Text>
           </TouchableOpacity>
@@ -86,13 +88,14 @@ const signup_name = () => {
                     setRestrictions(itemValue)
                   }
                   style={styles.picker}
+                  testID='diet-picker'
                 >
                   <Picker.Item label="Halal" value="Halal" />
                   <Picker.Item label="Vegetarian" value="Vegetarian" />
                   <Picker.Item label="Vegan" value="Vegan" />
                   <Picker.Item label="Nil" value="Nil" />
                 </Picker>
-                <RNButton title="Done" onPress={() => setModalVisible(false)} />
+                <RNButton title="Done" onPress={() => setModalVisible(false)} testID='done-diet-model'/>
               </View>
             </View>
           </Modal>
@@ -107,7 +110,7 @@ const signup_name = () => {
   )
 }
 
-export default signup_name;
+export default SignUpRestrictions;
 
 const styles = StyleSheet.create({
     back: {

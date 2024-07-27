@@ -15,7 +15,7 @@
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
       "@assets/*": ["assets/*"]
-    }
+    },
   },
   "include": [
     "**/*.ts",
