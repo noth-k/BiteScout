@@ -157,40 +157,45 @@ const RestaurantsComponent = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.header}>
-      <TouchableOpacity onPress={navigateToLeaderboard} style={styles.leaderboardBox}>
-        <Text style={styles.leaderboardText}>Leaderboard</Text>
-      </TouchableOpacity>
-      <Text style={styles.title}>Upvote Restaurants</Text>
-      <TouchableOpacity onPress={handleReload} style={styles.reloadIcon}>
-        <FontAwesome name="refresh" size={24} />
-      </TouchableOpacity>
-    </View>
-      <View style={styles.container}>
-
-        <View style={styles.searchBar}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter restaurant name"
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-        />
         <TouchableOpacity
-          style={styles.searchButton}
-          onPress={searchRestaurants}
+          onPress={navigateToLeaderboard}
+          style={styles.leaderboardBox}
         >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <Text style={styles.searchButtonText}>Search</Text>
-          )}
+          <Text style={styles.leaderboardText}>Leaderboard</Text>
         </TouchableOpacity>
+        <Text style={styles.title}>Upvote Restaurants</Text>
+        <TouchableOpacity onPress={handleReload} style={styles.reloadIcon}>
+          <FontAwesome name="refresh" size={24} />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.container}>
+        <View style={styles.searchBar}>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter restaurant name"
+            value={searchTerm}
+            onChangeText={setSearchTerm}
+          />
+          <TouchableOpacity
+            style={styles.searchButton}
+            onPress={searchRestaurants}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text style={styles.searchButtonText}>Search</Text>
+            )}
+          </TouchableOpacity>
         </View>
-        
+
         <FlatList
           data={restaurants}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View style={styles.restaurantContainer}>
+            <View
+              style={styles.restaurantContainer}
+              testID={`restaurant-item-${item.id}`}
+            >
               <TouchableOpacity onPress={() => openGoogleMaps(item.name)}>
                 <Text style={styles.restaurantName}>{item.name}</Text>
               </TouchableOpacity>
@@ -229,29 +234,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    flexDirection: 'row',
-    width:'100%',
-    alignItems: 'center',
+    flexDirection: "row",
+    width: "100%",
+    alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 10,
     backgroundColor: "white",
   },
   leaderboardText: {
     fontFamily: "Inter",
-    fontSize:12,
-    color:"white",
+    fontSize: 12,
+    color: "white",
   },
   title: {
     flex: 4,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   reloadIcon: {
     flex: 1,
-    textAlign: 'right',
+    textAlign: "right",
     fontSize: 20,
-    marginLeft:10,
+    marginLeft: 10,
   },
   container: {
     flex: 1,
@@ -259,8 +264,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   searchBar: {
-    flexDirection:"row",
-    gap:5,
+    flexDirection: "row",
+    gap: 5,
   },
   input: {
     height: 40,
@@ -269,15 +274,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 20,
     borderRadius: 5,
-    flex:7,
+    flex: 7,
   },
   searchButton: {
     backgroundColor: colors.primary400,
     padding: 10,
     alignItems: "center",
     borderRadius: 5,
-    flex:2,
-    height:40,
+    flex: 2,
+    height: 40,
   },
   searchButtonText: {
     color: "#fff",
@@ -300,7 +305,7 @@ const styles = StyleSheet.create({
   upvotes: {
     fontSize: 14,
     color: "#999",
-    marginBottom:10,
+    marginBottom: 10,
   },
   upvoteButton: {
     backgroundColor: colors.primary400,
@@ -308,9 +313,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
     alignItems: "center",
     borderRadius: 5,
-    height:40,
-    alignContent:'center',
-    justifyContent:'center',
+    height: 40,
+    alignContent: "center",
+    justifyContent: "center",
   },
   upvotedButton: {
     backgroundColor: colors.primary700, // Change to a different color when upvoted
@@ -327,8 +332,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   leaderboardBox: {
-    backgroundColor:colors.primary400,
-    borderRadius:10, 
-    padding:10, 
-  }
+    backgroundColor: colors.primary400,
+    borderRadius: 10,
+    padding: 10,
+  },
 });

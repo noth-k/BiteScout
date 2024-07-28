@@ -31,9 +31,14 @@ interface Place {
 interface Props {
   selectedPrice: string;
   selectedVibe: string;
+  testID?: string;
 }
 
-const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
+const DiningPlaces: React.FC<Props> = ({
+  selectedPrice,
+  selectedVibe,
+  testID,
+}) => {
   const { user } = useAuthContext(); // Get the current user from the authentication context
   const [location, setLocation] = useState<{ lat: number; lng: number } | null>(
     null
@@ -402,7 +407,7 @@ const DiningPlaces: React.FC<Props> = ({ selectedPrice, selectedVibe }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID={testID}>
       <TouchableOpacity
         style={styles.recommendButton}
         onPress={fetchRecommendations}
