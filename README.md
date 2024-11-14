@@ -1,6 +1,16 @@
 # BiteScout
 
 BiteScout is a mobile app designed to simplify dining decisions by offering personalized restaurant recommendations based on user preferences, dietary restrictions, mood, and budget. The app also enables collaborative dining choices for groups, facilitating seamless coordination among friends with diverse dining needs.
+<table>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/2992eb83-b62f-42b6-9560-50ab89404f37" alt="First Image" width="300"/>
+    </td>
+    <td style="padding-left: 20px;">
+      <img src="https://github.com/user-attachments/assets/4107417d-ad6d-4302-b006-e8822ed8aabe" alt="Second Image" width="305"/>
+    </td>
+  </tr>
+</table>
 
 ## Project Demo
 To get started:
